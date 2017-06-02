@@ -7,6 +7,9 @@ app.config(['$routeProvider',
       .when('/', {
         templateUrl: './views/index.html'
       })
+      .when('/global', {
+        templateUrl: './views/global.html'
+      })
       .when('/whatever', {
         templateUrl: './views/whatever.html'
       })
