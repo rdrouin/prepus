@@ -1,0 +1,8 @@
+import { combineReducers } from 'redux'
+import { routerReducer as router } from 'react-router-redux'
+import fileReducer from './modules/invoice'
+
+export default combineReducers({
+  fileReducer,
+  router
+})
