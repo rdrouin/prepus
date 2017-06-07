@@ -19,7 +19,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Jersey-2.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="GlassFish 5.0.0.b07" level="application_server_libraries" />
+    <orderEntry type="library" name="Jersey-2.2" level="project" />
   </component>
 </module>
