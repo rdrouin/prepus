@@ -5,7 +5,7 @@ import { argv } from 'yargs'
 
 const debug = _debug('app:config:_base')
 const config = {
-  env : process.env.NODE_ENV = 'production',
+  env : process.env.NODE_ENV || 'development',
 
   // ----------------------------------
   // Project Structure
@@ -19,10 +19,8 @@ const config = {
   // ----------------------------------
   // Server Configuration
   // ----------------------------------
- // server_host: 'localhost',
- // server_port: process.env.PORT || 5000,
-  server_host : 's6ie1702.gel.usherbrooke.ca',
-  server_port : process.env.PORT || 80,
+  server_host : 'localhost',
+  server_port : process.env.PORT || 5000,
 
   // ----------------------------------
   // Compiler Configuration
@@ -80,7 +78,9 @@ config.globals = {
   '__TEST__'     : config.env === 'test',
   '__DEBUG__'    : config.env === 'development' && !argv.no_debug,
   '__DEBUG_NEW_WINDOW__' : !!argv.nw,
-  '__BASENAME__' : JSON.stringify(process.env.BASENAME || '')
+  '__BASENAME__' : JSON.stringify(process.env.BASENAME || ''),
+  'TPS' : 0.05,
+  'TVQ' : 0.09975
 }
 
 // ------------------------------------
