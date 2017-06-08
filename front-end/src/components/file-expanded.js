@@ -10,7 +10,7 @@ export default class FileExpanded extends Component {
         <p>#{this.props.file.id}</p>
         <p>{this.props.file.cip}</p>
         <p>{this.props.file.name}</p>
-        <p>{this.props.file.size}</p>  
+        <p>{this.props.file.size}</p>
       </div>
     )
   }
