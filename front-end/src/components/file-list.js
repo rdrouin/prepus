@@ -20,10 +20,16 @@ class FileList extends Component {
         this.id = 1
         this.onAppend = this.onAppend.bind(this)
         this.loadDepot = this.loadDepot.bind(this)
+        this.showSimilaritiesOnly = this.showSimilaritiesOnly.bind(this)
+
     }
 
     loadDepot() {
         this.props.loadDepot()
+    }
+
+    showSimilaritiesOnly() {
+        this.props.showSimilaritiesOnly()
     }
 
     onAppend() {
@@ -32,8 +38,6 @@ class FileList extends Component {
     }
 
     render() {
-        console.log("BLEURGH!")
-        console.log(this.props)
         var styles = {
             alignment: {
                 textAlign: 'left'
@@ -48,15 +52,28 @@ class FileList extends Component {
         }
 
         // Left file
+
         let leftList = ''
         if (this.props.activeFileLeft == -1) {
-            leftList = this.props.files.map(file =>
-                <File
-                    file={file}
-                    key={file.id}
-                    setActiveFile={this.props.setActiveFileLeft}
-                />
-            )
+            if (this.props.similarities == true) {
+                leftList = this.props.files.filter(file => file.similarities.length > 0)
+                leftList = leftList.map(file =>
+                    <File
+                        file={file}
+                        key={file.id}
+                        setActiveFile={this.props.setActiveFileLeft}
+                    />
+                )
+            }
+            else {
+                leftList = this.props.files.map(file =>
+                    <File
+                        file={file}
+                        key={file.id}
+                        setActiveFile={this.props.setActiveFileLeft}
+                    />
+                )
+            }
         }
         else {
             leftList = this.props.files.filter(file => file.id == this.props.activeFileLeft).map((file) =>
@@ -80,20 +97,17 @@ class FileList extends Component {
             let rightFilesIds = leftFileSimilarities.map(file => file.id);
             rightFilesIds = rightFilesIds.filter((file, pos) => (rightFilesIds.indexOf(file) == pos));
 
-
-          
             if (leftFileSimilarities.length == 0) {
-                console.log("Aucun plagiat")
                 rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> Aucun plagiat détecté </div>
             } else {
                 var leftFile = this.props.files.filter(file => file.id == this.props.activeFileLeft)
-                rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => rightFilesIds == file.id ).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>
+                rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => rightFilesIds == file.id).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>
             }
         } else if (this.props.activeFileRight != -1) {
             rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id} />)}</ul></div>
 
         }
-            
+
 
         return (
             <div>
@@ -113,18 +127,20 @@ class FileList extends Component {
                 </div>
 
                 {this.props.activeFileLeft == -1 ? <button onClick={this.loadDepot}>Add</button> : ''}
+                <br />
+                <br />
+                <input type="checkbox" name="vehicle" value="Car" onClick={this.showSimilaritiesOnly} />Show Similarities Only
             </div>
         )
     }
 }
 
 function mapStateTopProps(state) {
-    console.log("State")
-    console.log(state)
     return {
         files: state.fileReducer.files,
         activeFileLeft: state.fileReducer.activeFileLeft,
-        activeFileRight: state.fileReducer.activeFileRight
+        activeFileRight: state.fileReducer.activeFileRight,
+        similarities: state.fileReducer.similarities
     }
 }
 
@@ -136,8 +152,10 @@ function mapDispatchToProps(dispatch) {
         removeActiveFileLeft: FileActions.removeActiveFileLeft,
         removeActiveFileRight: FileActions.removeActiveFileRight,
         removeActiveFiles: FileActions.removeActiveFiles,
-        loadDepot: FileActions.loadDepot
+        loadDepot: FileActions.loadDepot,
+        showSimilaritiesOnly: FileActions.showSimilaritiesOnly,
     }, dispatch)
 }
 
 export default connect(mapStateTopProps, mapDispatchToProps)(FileList)
+            //    {this.props.activeFileLeft == -1 ? <button onClick={this.showSimilaritiesOnly}>Filter</button> : ''}

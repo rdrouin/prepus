@@ -1,37 +1,31 @@
 const xmlData = `<depot>
-<id>1</id>
-<files>
-<file>
-<id>1</id>
-<name>Salut</name>
-</file>
-<file>
-<id>2</id>
-<name>Buche</name>
-</file>
-<file>
-<id>5</id>
-<name>Tes</name>
-</file>
-<file>
-<id>6</id>
-<name>Beau</name>
-</file>
-</files>
-<similarities>
-<similarity>
-<file1>1</file1>
-<file2>2</file2>
-<percent>3</percent>
-<type>4</type>
-</similarity>
-<similarity>
-<file1>5</file1>
-<file2>6</file2>
-<percent>7</percent>
-<type>8</type>
-</similarity>
-</similarities>
+  <id>1</id>
+  <files>
+    <file>
+      <id>1</id>
+      <name>Salut</name>
+    </file>
+    <file>
+      <id>2</id>
+      <name>Buche</name>
+    </file>
+    <file>
+      <id>5</id>
+      <name>Tes</name>
+    </file>
+    <file>
+      <id>6</id>
+      <name>Beau</name>
+    </file>
+  </files>
+  <similarities>
+    <similarity>
+      <file1>1</file1>
+      <file2>2</file2>
+      <percent>3</percent>
+      <type>4</type>
+    </similarity>
+  </similarities>
 </depot>`
 
 // ------------------------------------
@@ -44,6 +38,7 @@ export const REMOVE_ACTIVE_FILE_LEFT = 'REMOVE_ACTIVE_FILE_LEFT'
 export const REMOVE_ACTIVE_FILE_RIGHT = 'REMOVE_ACTIVE_FILE_RIGHT'
 export const REMOVE_ACTIVE_FILES = 'REMOVE_ACTIVE_FILES'
 export const LOAD_DEPOT = 'LOAD_DEPOT'
+export const SHOW_SIMILARITIES_ONLY = 'SHOW_SIMILARITIES_ONLY'
 
 // ------------------------------------
 // Actions
@@ -62,7 +57,7 @@ function append(id, cip, name, size, plagiarism) {
   }
 }
 
-function loadDepot(){
+function loadDepot() {
   return {
     type: LOAD_DEPOT,
     payload: {
@@ -106,6 +101,11 @@ function removeActiveFiles() {
     type: REMOVE_ACTIVE_FILES
   }
 }
+function showSimilaritiesOnly() {
+  return {
+    type: SHOW_SIMILARITIES_ONLY
+  }
+}
 
 export const FileActions = {
   append,
@@ -114,7 +114,8 @@ export const FileActions = {
   removeActiveFileLeft,
   removeActiveFileRight,
   removeActiveFiles,
-  loadDepot
+  loadDepot,
+  showSimilaritiesOnly
 }
 
 // ------------------------------------
@@ -128,31 +129,32 @@ const ACTION_HANDLERS = {
   [REMOVE_ACTIVE_FILE_RIGHT]: (state, action) => ({ ...state, activeFileRight: -1 }),
   [REMOVE_ACTIVE_FILES]: (state, action) => ({ ...state, activeFileRight: -1, activeFileLeft: -1 }),
   [LOAD_DEPOT]: (state, action) => (bs(state)),
+  [SHOW_SIMILARITIES_ONLY]: (state, action) => ({ ...state, similarities: !state.similarities }),
 }
 
-function bs(state){
+function bs(state) {
   var parseString = require('xml2js').parseString
-  var newState = []  
-  parseString(xmlData, function(err, result){
+  var newState = []
+  parseString(xmlData, function (err, result) {
     var files = result.depot.files[0].file
     var similarities = result.depot.similarities[0].similarity
-    console.log(files)
-    for(var i = 0;i<files.length;i++){
-      newState[i] = {id:files[i].id[0], name:files[i].name[0], similarities: []}
+
+    for (var i = 0; i < files.length; i++) {
+      newState[i] = { id: files[i].id[0], name: files[i].name[0], similarities: [] }
     }
 
-    for(var i = 0;i<similarities.length;i++){
+    for (var i = 0; i < similarities.length; i++) {
       var file1 = similarities[i].file1[0]
       var file2 = similarities[i].file2[0]
       var percent = similarities[i].percent[0]
 
-      newState.filter(file => file.id  == file1)[0].similarities.push({id:file2, percent: percent})
-      newState.filter(file => file.id  == file2)[0].similarities.push({id:file1, percent: percent})
+      newState.filter(file => file.id == file1)[0].similarities.push({ id: file2, percent: percent })
+      newState.filter(file => file.id == file2)[0].similarities.push({ id: file1, percent: percent })
     }
 
-    console.log({...state, files: [...state.files.concat(...newState)]})
+    console.log({ ...state, files: [...state.files.concat(...newState)] })
   })
-  return {...state, files: [...state.files.concat(...newState)]}
+  return { ...state, files: [...state.files.concat(...newState)] }
 }
 
 // ------------------------------------
@@ -162,6 +164,7 @@ function bs(state){
 export const initFile = {
   activeFileLeft: -1,
   activeFileRight: -1,
+  similarities: 0,
   files: []
 }
 export default function fileReducer(state = initFile, action) {
