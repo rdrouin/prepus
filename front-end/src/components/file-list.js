@@ -19,6 +19,11 @@ class FileList extends Component {
         let id = ''
         this.id = 1
         this.onAppend = this.onAppend.bind(this)
+        this.loadDepot = this.loadDepot.bind(this)
+    }
+
+    loadDepot() {
+        this.props.loadDepot()
     }
 
     onAppend() {
@@ -26,8 +31,9 @@ class FileList extends Component {
         this.id++
     }
 
-
     render() {
+        console.log("BLEURGH!")
+        console.log(this.props)
         var styles = {
             alignment: {
                 textAlign: 'left'
@@ -38,9 +44,7 @@ class FileList extends Component {
                 borderColor: 'gray',
                 borderRadius: 5,
                 marginTop: 20
-
             }
-
         }
 
         // Left file
@@ -65,64 +69,29 @@ class FileList extends Component {
 
         // Right File 
         let rightList = ''
-        /*
-<div className="col-lg-5 col-lg-offset-1" style={styles.borders}>         
-                        <button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button>
-                        <ul className="list-unstyled" style={styles.alignment}>
-                            {rightList}                   
-                      </ul>
-                      </div>
-                     
-    
-                      : <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> Aucun plagiat détecté </div> : ''} 
-                                       
-                </div>
-*/
-        let leftFilePlagiarism = []
+        let leftFileSimilarities = []
 
         if (this.props.activeFileLeft == -1) {
             rightList = ''
         } else if (this.props.activeFileLeft != -1 && this.props.activeFileRight == -1) {
-            leftFilePlagiarism = this.props.files.filter(file => file.id == this.props.activeFileLeft)[0].plagiarism;
-            if (leftFilePlagiarism.length == 0) {
+            leftFileSimilarities = this.props.files.filter(file => file.id == this.props.activeFileLeft)[0].similarities;
+
+            let rightFilesIds = leftFileSimilarities.map(file => file.id);
+            rightFilesIds = rightFilesIds.filter((file, pos) => (rightFilesIds.indexOf(file) == pos));
+
+
+          
+            if (leftFileSimilarities.length == 0) {
                 console.log("Aucun plagiat")
                 rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> Aucun plagiat détecté </div>
             } else {
-                rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => leftFilePlagiarism.indexOf(file.id) >= 0).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>
+                var leftFile = this.props.files.filter(file => file.id == this.props.activeFileLeft)
+                rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => rightFilesIds == file.id ).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>
             }
-        }else if(this.props.activeFileRight != -1){
+        } else if(this.props.activeFileRight != -1){
             rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id}/>)}</ul></div>
             
         }
-        
-        /*
-        if (this.props.activeFileLeft != -1 && this.props.activeFileRight == -1) {
-            rightList = this.props.files.filter(file => leftFilePlagiarism.indexOf(file.id) >= 0).map(file =>
-                <File
-                    file={file}
-                    key={file.id}
-                    setActiveFile={this.props.setActiveFileRight}
-                />
-
-            )
-        }
-        else if (this.props.activeFileLeft != -1 && this.props.activeFileRight != -1) {
-            rightList = this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) =>
-                <FileExpanded
-                    file={file}
-                    key={file.id}
-                />
-            )
-
-        }*/
-
-            // 
-            let noPlagiarism = ''
-        if (leftFilePlagiarism > 0 && this.props.activeFileRight != -1) {
-
-        }
-
-
 
         return (
             <div>
@@ -139,13 +108,15 @@ class FileList extends Component {
                     </div>
                     {rightList}
                 </div>
-                {this.props.activeFileLeft == -1 ? <button onClick={this.onAppend}>Add</button> : ''}
+                {this.props.activeFileLeft == -1 ? <button onClick={this.loadDepot}>Add</button> : ''}
             </div>
         )
     }
 }
 
 function mapStateTopProps(state) {
+    console.log("State")
+    console.log(state)
     return {
         files: state.fileReducer.files,
         activeFileLeft: state.fileReducer.activeFileLeft,
@@ -160,7 +131,8 @@ function mapDispatchToProps(dispatch) {
         setActiveFileRight: FileActions.setActiveFileRight,
         removeActiveFileLeft: FileActions.removeActiveFileLeft,
         removeActiveFileRight: FileActions.removeActiveFileRight,
-        removeActiveFiles: FileActions.removeActiveFiles
+        removeActiveFiles: FileActions.removeActiveFiles,
+        loadDepot: FileActions.loadDepot
     }, dispatch)
 }
 
