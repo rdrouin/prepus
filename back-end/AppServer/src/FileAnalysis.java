@@ -12,7 +12,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FileAnalysis {
 
@@ -22,29 +24,40 @@ public class FileAnalysis {
 
     public static void main(String[] args)
     {
-        System.out.println("Program Start");
-
-        // GET FILE LIST
-
-
-        String path = "/Users/emilearseneault/Desktop/foremilio/src/TestingFile.txt";
-        List<String> filePathArray = getFileList(42);
-        System.out.println(filePathArray);
-
-        // ANALYSE
-        //getFileContent(path);
-        //getFileMetaData(path);
-
-        //getFileMetaData(filePathArray.get(0));
-
-        // Faire l'analyse ou les analyses
-        List<String> analyse = sizeAnalysis(filePathArray);
-        System.out.println(analyse);
+        launchAnalysis(23);
+//        System.out.println("Program Start");
+//        // GET FILE LIST
+//        String path = "/Users/emilearseneault/Desktop/foremilio/src/TestingFile.txt";
+//        List<String> filePathArray = getFileList(42);
+//        System.out.println(filePathArray);
+//        // ANALYSE
+//        //getFileContent(path);
+//        //getFileMetaData(path);
+//        //getFileMetaData(filePathArray.get(0));
+//
+//        // Faire l'analyse ou les analyses
+//        List<String> analyse = sizeAnalysis(filePathArray);
+//        System.out.println(analyse);
 
         // Pass Analysis to Database
         // Pass objects : Doc 1, Doc 2, Methode, Commentaire, Pourcentage, Debut 1, Fin 1, Debut 2, Fin 2
         // Pour itération 1 : Doc 1, Doc 2, Methode (Size), Commentaire (SizeOfFile)
 
+
+    }
+    public static void launchAnalysis(int depot){
+        System.out.println("Program Start");
+        // GET FILE LIST
+        String path = "/Users/emilearseneault/Desktop/foremilio/src/TestingFile.txt";
+        HashMap<Integer,String> filePathArray = getFileList(depot);
+       // System.out.println(filePathArray);
+
+        List<String> analyse = sizeAnalysis(filePathArray);
+        for (int i=0; i< analyse.size(); i++){
+
+            System.out.println(analyse.get(i));
+        }
+        //System.out.println(analyse);
 
     }
 
@@ -81,9 +94,9 @@ public class FileAnalysis {
         return fileDescriptionList;
     }
 
-    public static List<String> getFileList(int remiseID) {
+    public static HashMap<Integer,String> getFileList(int remiseID) {
 
-        List<String> filePathList = new ArrayList<String>();
+        HashMap<Integer,String> filePathList = new HashMap<Integer,String>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -110,6 +123,7 @@ public class FileAnalysis {
             ResultSetMetaData resultMeta = result.getMetaData();
             int pathID = 0;
             int nameID = 0;
+            int ID =0;
 
             for(int i = 1; i <= resultMeta.getColumnCount();i++) {
                 if (resultMeta.getColumnLabel(i).equals("location")){
@@ -118,6 +132,10 @@ public class FileAnalysis {
                 if (resultMeta.getColumnLabel(i).equals("nom")){
                     nameID = i;
                 }
+                if (resultMeta.getColumnLabel(i).equals("id")){
+                    ID = i;
+                }
+
             }
 
             // Concatenate path and filename to return
@@ -126,7 +144,8 @@ public class FileAnalysis {
             while(result.next()) {
                     filePath = result.getObject(pathID).toString();
                     fileName = result.getObject(nameID).toString();
-                    filePathList.add(filePath + fileName);
+                    filePathList.put(Integer.parseInt(result.getObject(ID).toString()),filePath + fileName);
+
             }
 
             result.close();
@@ -209,8 +228,8 @@ public class FileAnalysis {
         return size;
     }
 
-    public static List<String> sizeAnalysis(List<String> filePathList)
-    {
+    public static List<String> sizeAnalysis(HashMap<Integer,String> filePathMap) {
+        HashMap<Integer, Long> fileSizes = new HashMap<Integer, Long>(); // id, size
 
         List<Long> fileSizeArray = new ArrayList<Long>();
         List<Long> uniqueFileSize = new ArrayList<Long>();
@@ -220,10 +239,15 @@ public class FileAnalysis {
 
         String analysisString = "";
 
-        // Get all sizes and uniques
+        // Mesure size
         int uniqueIndex = 0;
         boolean found = false;
-        for (int i = 0; i < filePathList.size(); i++)
+        int i = 0;
+        for (Map.Entry<Integer, String> entry : filePathMap.entrySet()) {
+            fileSizes.put(entry.getKey(), getSizeOfFile(entry.getValue()));
+        }
+
+       /* for (int i = 0; i < filePathList.size(); i++)
         {
             fileSizeArray.add(getSizeOfFile(filePathList.get(i)));
 
@@ -242,35 +266,27 @@ public class FileAnalysis {
                 uniqueFileSize.add(fileSizeArray.get(i));
             }
             uniqueIndex = 0;
-        }
+        }*/
 
-        System.out.println(uniqueFileSize);
+       // System.out.println(uniqueFileSize);
 
         // Find same sizes
-        for (int i = 0; i < uniqueFileSize.size(); i++) {
 
-            for (int j = 0; j < fileSizeArray.size(); j++){
-                if (uniqueFileSize.get(i).equals(fileSizeArray.get(j))) {
-                    sameSizeNameTemp.add(filePathList.get(j));
-                    sameSizeIndexTemp.add(j);
+        for (Map.Entry<Integer, String> entry1 : filePathMap.entrySet())
+        {
+            for (Map.Entry<Integer, String> entry2 : filePathMap.entrySet())
+            {
+                if (!entry1.getKey().equals(entry2.getKey()))
+                if (fileSizes.get(entry1.getKey()).equals(fileSizes.get(entry2.getKey())))
+                {
+                    AddResult.insertResult(entry1.getKey(),entry2.getKey(),1,100, fileSizes.get(entry2.getKey()).toString() ,0,0,0,0 );
+                    System.out.println(entry1.getKey() +"  "+ entry2.getKey()+"  "+ fileSizes.get(entry2.getKey()).toString() );
                 }
             }
-
-            for (int j = 0; j < sameSizeNameTemp.size(); j++) {
-                for (int k = 0; k < sameSizeNameTemp.size(); k++){
-                    // Create record
-                    if (j != k){
-                        analysisString = "{Doc 1 : " + filePathList.get(sameSizeIndexTemp.get(j))
-                                + ", Doc 2 : " + filePathList.get(sameSizeIndexTemp.get(k))
-                                + ", Methode : size, Commentaire : " + fileSizeArray.get(sameSizeIndexTemp.get(j)) + "}";
-                        analysisStringArray.add(analysisString);
-                    }
-                }
-            }
-
-            sameSizeNameTemp.clear();
-            sameSizeIndexTemp.clear();
         }
+
+
+
 
         return analysisStringArray;
     }

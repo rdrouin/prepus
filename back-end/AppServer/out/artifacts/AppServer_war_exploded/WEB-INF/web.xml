@@ -31,4 +31,13 @@
         <servlet-name>Files</servlet-name>
         <url-pattern>/files/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>Analysis</servlet-name>
+        <servlet-class>ServeletAnalysis</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Analysis</servlet-name>
+        <url-pattern>/analysis/*</url-pattern>
+    </servlet-mapping>
 </web-app>
