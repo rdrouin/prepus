@@ -1,18 +1,18 @@
 /**
  * Created by emilearseneault on 2017-06-05.
  */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
-import java.util.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileAnalysis {
 
