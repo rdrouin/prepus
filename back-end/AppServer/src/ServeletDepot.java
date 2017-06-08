@@ -14,38 +14,34 @@ public class ServeletDepot extends HttpServlet {
 
         List<FileDescription> fileList = FileAnalysis.getFileDescriptionList(0);
 
-        String returnedValue = "<depot>";
+        String returnedValue = "{\"depot\":{";
 
-        returnedValue += "<id>1</id>";
+        returnedValue += "\"id\" : \"1\",";   // TODO rdrouin 2017-06-07 De-hard-code this line
 
-        returnedValue += "<files>";
+        returnedValue += "\"files\" : [";
 
         for (int i = 0; i < fileList.size(); i++) {
-            returnedValue += ("<file>" +
-                    "<id>" + fileList.get(i).getId() + "</id>" +
-                    "<name>" + fileList.get(i).getName() + "</name>" +
-                    "</file>"
-            );
+            returnedValue += (
+                    "{\"id\" : \"" + fileList.get(i).getId() + "\"," +
+                    "\"name\" : \"" + fileList.get(i).getName() + "\"},");
         }
-        returnedValue += "</files>";
+        returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
+        returnedValue += "],";
 
+        // TODO rdrouin 2017-06-07 Replace this part with a GET request to url "/similarities"
         List<Similarity> similaritiesList = FileAnalysis.getSimilarities();
-
-        returnedValue += "<similarities>";
-
+        returnedValue += "\"similarities\" : [";
         for (int i = 0; i < similaritiesList.size(); i++) {
-            returnedValue += ("<similarity>" +
-                    "<file1>" + similaritiesList.get(i).getFile1() + "</file1>" +
-                    "<file2>" + similaritiesList.get(i).getFile2() + "</file2>" +
-                    "<percent>" + similaritiesList.get(i).getPercent() + "</percent>" +
-                    "<type>" + similaritiesList.get(i).getType() + "</type>" +
-                    "</similarity>"
-            );
+            returnedValue += ("{" +
+                    "\"file1\" : \"" + similaritiesList.get(i).getFile1() + "\"," +
+                    "\"file2\" : \"" + similaritiesList.get(i).getFile2() + "\"," +
+                    "\"percent\" : \"" + similaritiesList.get(i).getPercent() + "\"," +
+                    "\"type\"  : \"" + similaritiesList.get(i).getType() + "\"},");
         }
-        returnedValue += "</similarities>";
+        returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
+        returnedValue += "]}}";
 
-        returnedValue += "</depot>";
-        response.setContentType("text/xml");
+        response.setContentType("text/json");
         response.setCharacterEncoding( "UTF-8" );
         PrintWriter out = response.getWriter();
         out.println(returnedValue);
