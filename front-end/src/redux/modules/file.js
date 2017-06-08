@@ -1,39 +1,4 @@
-<<<<<<< HEAD
-const xmlData = `<depot>
-  <id>1</id>
-  <files>
-    <file>
-      <id>1</id>
-      <name>Salut</name>
-    </file>
-    <file>
-      <id>2</id>
-      <name>Buche</name>
-    </file>
-    <file>
-      <id>5</id>
-      <name>Tes</name>
-    </file>
-    <file>
-      <id>6</id>
-      <name>Beau</name>
-    </file>
-  </files>
-  <similarities>
-    <similarity>
-      <file1>1</file1>
-      <file2>2</file2>
-      <percent>3</percent>
-      <type>4</type>
-    </similarity>
-  </similarities>
-</depot>`
-=======
-//import fetch from 'isomorphic-fetch'
-
-const jsonData = `{"depot":{"id" : "1","files" : [{"id" : "1","name" : "Salut"},{"id" : "2","name" : "Buche"},{"id" : "5","name" : "Tes"},{"id" : "6","name" : "Beau"}],"similarities" : [{"file1" : "1","file2" : "2","percent" : "3","type"  : "4"},{"file1" : "5","file2" : "6","percent" : "7","type"  : "8"}]}}
-`
->>>>>>> API en JSON
+const jsonData = `{"depot":{"id" : "1","files" : [{"id" : "1","name" : "Salut"},{"id" : "2","name" : "Buche"},{"id" : "5","name" : "Tes"},{"id" : "6","name" : "Beau"}],"similarities" : [{"file1" : "1","file2" : "2","percent" : "3","type"  : "4"},{"file1" : "5","file2" : "6","percent" : "7","type"  : "8"}]}}`
 
 // ------------------------------------
 // Constants
@@ -44,21 +9,23 @@ export const SET_ACTIVE_FILE_RIGHT = 'SET_ACTIVE_FILE_RIGHT'
 export const REMOVE_ACTIVE_FILE_LEFT = 'REMOVE_ACTIVE_FILE_LEFT'
 export const REMOVE_ACTIVE_FILE_RIGHT = 'REMOVE_ACTIVE_FILE_RIGHT'
 export const REMOVE_ACTIVE_FILES = 'REMOVE_ACTIVE_FILES'
-<<<<<<< HEAD
 export const LOAD_DEPOT = 'LOAD_DEPOT'
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
 export const SHOW_SIMILARITIES_ONLY = 'SHOW_SIMILARITIES_ONLY'
-=======
 export const RECEIVE_FILES = 'RECEIVE_FILES'
 export const REQUEST_FILE = 'REQUEST_FILE'
 export const REQUEST_ANALYSIS = 'REQUEST_ANALYSIS'
+<<<<<<< HEAD
 >>>>>>> API en JSON
 >>>>>>> API en JSON
 =======
 export const SHOW_SIMILARITIES_ONLY = 'SHOW_SIMILARITIES_ONLY'
 >>>>>>> Filter show only similarities
+=======
+
+>>>>>>> merge completed
 
 // ------------------------------------
 // Actions
@@ -79,12 +46,15 @@ function append(id, cip, name, size, plagiarism) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 function loadDepot(){
 =======
 <<<<<<< HEAD
 function loadDepot() {
 >>>>>>> API en JSON
 =======
+=======
+>>>>>>> merge completed
 function loadDepot() {
 >>>>>>> Filter show only similarities
   return {
@@ -95,8 +65,6 @@ function loadDepot() {
   }
 }
 
-=======
->>>>>>> API en JSON
 function setActiveFileLeft(id) {
   return {
     type: SET_ACTIVE_FILE_LEFT,
@@ -138,7 +106,7 @@ function showSimilaritiesOnly() {
   }
 }
 
-function receiveFiles(response){
+function receiveFiles(response) {
   return {
     type: RECEIVE_FILES,
     payload: response
@@ -189,9 +157,11 @@ const ACTION_HANDLERS = {
   [REMOVE_ACTIVE_FILE_LEFT]: (state, action) => ({ ...state, activeFileLeft: -1 }),
   [REMOVE_ACTIVE_FILE_RIGHT]: (state, action) => ({ ...state, activeFileRight: -1 }),
   [REMOVE_ACTIVE_FILES]: (state, action) => ({ ...state, activeFileRight: -1, activeFileLeft: -1 }),
-<<<<<<< HEAD
   [LOAD_DEPOT]: (state, action) => (bs(state)),
   [SHOW_SIMILARITIES_ONLY]: (state, action) => ({ ...state, similarities: !state.similarities }),
+  [REQUEST_FILE]: (state, action) => ({ ...state }),
+  [REQUEST_ANALYSIS]: (state, action) => ({ ...state }),
+  [RECEIVE_FILES]: (state, action) => (bs2(state, action)),
 }
 
 function bs(state) {
@@ -221,10 +191,7 @@ function bs(state) {
   return {...state, files: [...state.files.concat(...newState)]}
 =======
   return { ...state, files: [...state.files.concat(...newState)] }
-=======
-  [REQUEST_FILE]: (state, action) => ({...state}),
-  [REQUEST_ANALYSIS]: (state, action) => ({...state}),
-  [RECEIVE_FILES]: (state, action) => (bs2(state, action)),
+
 }
 
 
@@ -241,60 +208,64 @@ function loadDepot(){
 function analyseDepot() {
   return dispatch => {
     dispatch(requestAnalysis())
-    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1`, {method: 'POST'})
+    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1`, { method: 'POST' })
   }
->>>>>>> API en JSON
 }
 
-function loadDepot(){
-  return dispatch => {
-    dispatch(requestFiles())
-    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/depot`, {method: 'GET'})
-    .then(response => response.json())
-    .then(json => dispatch(receiveFiles(json)))
+  function loadDepot() {
+    return dispatch => {
+      dispatch(requestFiles())
+      return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/depot`, { method: 'GET' })
+        .then(response => response.json())
+        .then(json => dispatch(receiveFiles(json)))
+    }
   }
+<<<<<<< HEAD
 >>>>>>> API en JSON
 =======
   return { ...state, files: [...state.files.concat(...newState)] }
 >>>>>>> Filter show only similarities
 }
+=======
+>>>>>>> merge completed
 
-//dispatch(receiveFiles(response))
-function bs2(state, action) {
-  var newState = []
-  var response = action.payload
+  //dispatch(receiveFiles(response))
+  function bs2(state, action) {
+    var newState = []
+    var response = action.payload
 
-  console.log("SERVER DATA!!")
-  console.log(response)
-  var files = response.depot.files
-  var similarities = response.depot.similarities
-  for(var i = 0;i<files.length;i++){
-    newState[i] = {id:files[i].id, name:files[i].name, similarities: []}
+    console.log("SERVER DATA!!")
+    console.log(response)
+    var files = response.depot.files
+    var similarities = response.depot.similarities
+    for (var i = 0; i < files.length; i++) {
+      newState[i] = { id: files[i].id, name: files[i].name, similarities: [] }
+    }
+
+    for (var i = 0; i < similarities.length; i++) {
+      var file1 = similarities[i].file1
+      var file2 = similarities[i].file2
+      var percent = similarities[i].percent
+
+      newState.filter(file => file.id == file1)[0].similarities.push({ id: file2, percent: percent })
+      newState.filter(file => file.id == file2)[0].similarities.push({ id: file1, percent: percent })
+    }
+    console.log("newState")
+    console.log(newState)
+    return { ...state, files: [...state.files.concat(...newState)] }
   }
 
-  for(var i = 0;i<similarities.length;i++){
-    var file1 = similarities[i].file1
-    var file2 = similarities[i].file2
-    var percent = similarities[i].percent
+  // ------------------------------------
+  // Reducer
+  // ------------------------------------
 
-    newState.filter(file => file.id  == file1)[0].similarities.push({id:file2, percent: percent})
-    newState.filter(file => file.id  == file2)[0].similarities.push({id:file1, percent: percent})
+  export const initFile = {
+    activeFileLeft: -1,
+    activeFileRight: -1,
+    similarities: 0,
+    files: []
   }
-  console.log("newState")
-  console.log(newState)
-  return {...state, files: [...state.files.concat(...newState)]}
-}
-// ------------------------------------
-// Reducer
-// ------------------------------------
-
-export const initFile = {
-  activeFileLeft: -1,
-  activeFileRight: -1,
-  similarities: 0,
-  files: []
-}
-export default function fileReducer(state = initFile, action) {
-  const handler = ACTION_HANDLERS[action.type]
-  return handler ? handler(state, action) : state
-}
+  export default function fileReducer(state = initFile, action) {
+    const handler = ACTION_HANDLERS[action.type]
+    return handler ? handler(state, action) : state
+  }
