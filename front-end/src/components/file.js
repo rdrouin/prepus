@@ -9,7 +9,7 @@ export default class File extends Component {
     this.setActiveFile = this.setActiveFile.bind(this)
   }
 
-  setActiveFile(){
+  setActiveFile() {
     this.props.setActiveFile(this.props.file.id);
   }
 

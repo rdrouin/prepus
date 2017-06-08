@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import File from './file'
 import FileExpanded from './file-expanded'
 import { FileActions } from '../redux/modules/file'
-
+import Header from '../components/header'
 
 class FileList extends Component {
 
@@ -38,7 +38,6 @@ class FileList extends Component {
                 borderColor: 'gray',
                 borderRadius: 5,
                 marginTop: 20
-
             }
 
         }
@@ -65,21 +64,10 @@ class FileList extends Component {
 
         // Right File 
         let rightList = ''
-        /*
-<div className="col-lg-5 col-lg-offset-1" style={styles.borders}>         
-                        <button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button>
-                        <ul className="list-unstyled" style={styles.alignment}>
-                            {rightList}                   
-                      </ul>
-                      </div>
-                     
-    
-                      : <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> Aucun plagiat détecté </div> : ''} 
-                                       
-                </div>
-*/
         let leftFilePlagiarism = []
-
+        
+        let filesPlagiarism = this.props.files.map((file) => 
+        console.log(file) )
         if (this.props.activeFileLeft == -1) {
             rightList = ''
         } else if (this.props.activeFileLeft != -1 && this.props.activeFileRight == -1) {
@@ -90,42 +78,14 @@ class FileList extends Component {
             } else {
                 rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => leftFilePlagiarism.indexOf(file.id) >= 0).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>
             }
-        }else if(this.props.activeFileRight != -1){
-            rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id}/>)}</ul></div>
-            
-        }
-        
-        /*
-        if (this.props.activeFileLeft != -1 && this.props.activeFileRight == -1) {
-            rightList = this.props.files.filter(file => leftFilePlagiarism.indexOf(file.id) >= 0).map(file =>
-                <File
-                    file={file}
-                    key={file.id}
-                    setActiveFile={this.props.setActiveFileRight}
-                />
-
-            )
-        }
-        else if (this.props.activeFileLeft != -1 && this.props.activeFileRight != -1) {
-            rightList = this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) =>
-                <FileExpanded
-                    file={file}
-                    key={file.id}
-                />
-            )
-
-        }*/
-
-            // 
-            let noPlagiarism = ''
-        if (leftFilePlagiarism > 0 && this.props.activeFileRight != -1) {
+        } else if (this.props.activeFileRight != -1) {
+            rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id} />)}</ul></div>
 
         }
-
-
 
         return (
             <div>
+                <Header />
                 <div className="row">
                     <h4>Étudiants potentiellement en situation de plagiat</h4>
                 </div>
@@ -140,6 +100,7 @@ class FileList extends Component {
                     {rightList}
                 </div>
                 {this.props.activeFileLeft == -1 ? <button onClick={this.onAppend}>Add</button> : ''}
+                
             </div>
         )
     }
