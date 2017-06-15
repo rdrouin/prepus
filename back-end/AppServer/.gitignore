@@ -3,7 +3,6 @@
 
 # Mobile Tools for Java (J2ME)
 out
-.idea/workspace.xml
 
 # Package Files #
 *.jar
