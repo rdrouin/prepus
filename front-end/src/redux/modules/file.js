@@ -1,5 +1,4 @@
-const jsonData = `{"depot":{"id" : "1","files" : [{"id" : "1","name" : "Salut"},{"id" : "2","name" : "Buche"},{"id" : "5","name" : "Tes"},{"id" : "6","name" : "Beau"}],"similarities" : [{"file1" : "1","file2" : "2","percent" : "3","type"  : "4"},{"file1" : "5","file2" : "6","percent" : "7","type"  : "8"}]}}`
-
+const jsonData = '{"depot":{"id" : "1","files" : [{"id" : "1","name" : "Document1.pdf"},{"id" : "2","name" : "travaux2.pdf"},{"id" : "5","name" : "belo2302.pdf"},{"id" : "6","name" : "ethique.pdf"},{"id" : "10","name" : "parfait.pdf"}],"similarities" : [{"file1" : "1","file2" : "2","percent" : "3","type"  : "4"},{"file1" : "5","file2" : "6","percent" : "7","type"  : "8"}]}}'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -32,7 +31,7 @@ function append(id, cip, name, size, plagiarism) {
     }
   }
 }
-
+/*
 function loadDepot() {
   return {
     type: LOAD_DEPOT,
@@ -41,7 +40,7 @@ function loadDepot() {
     }
   }
 }
-
+*/
 function setActiveFileLeft(id) {
   return {
     type: SET_ACTIVE_FILE_LEFT,
@@ -158,17 +157,6 @@ function bs(state) {
 
 }
 
-
-/*
-function loadDepot(){
-  return dispatch => {
-    dispatch(requestFiles())
-    return fetch(`https://api.github.com/users/mralexgray/repos`, {method: 'GET'})
-    .then(response => response.json())
-    .then(json => dispatch(receiveFiles(json)))
-  }
-}*/
-
 function analyseDepot() {
   return dispatch => {
     dispatch(requestAnalysis())
@@ -179,10 +167,16 @@ function analyseDepot() {
   function loadDepot() {
     return dispatch => {
       dispatch(requestFiles())
+      var json = JSON.parse(jsonData)
+      return dispatch(receiveFiles(json))
+    }
+    //return dispatch => {dispatch(receiveFiles(jsonData))}
+   /* return dispatch => {
+      dispatch(requestFiles())
       return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/depot`, { method: 'GET' })
         .then(response => response.json())
         .then(json => dispatch(receiveFiles(json)))
-    }
+    }*/
   }
 
   //dispatch(receiveFiles(response))
@@ -190,7 +184,7 @@ function analyseDepot() {
     var newState = []
     var response = action.payload
 
-    console.log("SERVER DATA!!")
+    //console.log("SERVER DATA!!")
     console.log(response)
     var files = response.depot.files
     var similarities = response.depot.similarities
@@ -207,7 +201,7 @@ function analyseDepot() {
       newState.filter(file => file.id == file2)[0].similarities.push({ id: file1, percent: percent })
     }
     console.log("newState")
-    console.log(newState)
+    //console.log(newState)
     return { ...state, files: [...state.files.concat(...newState)] }
   }
 

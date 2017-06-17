@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 
 import File from './file'
 import FileExpanded from './file-expanded'
+import FileLeft from './file-left'
 import { FileActions } from '../redux/modules/file'
 import Header from '../components/header'
 
@@ -14,7 +15,7 @@ class FileList extends Component {
         files: PropTypes.array
     }
 
-    constructor(props) {
+   constructor(props) {
         super(props)
         let id = ''
         this.id = 1
@@ -57,7 +58,7 @@ class FileList extends Component {
 
         // Left file
 
-        let leftList = ''
+     /*  let leftList = ''
         if (this.props.activeFileLeft == -1) {
             if (this.props.similarities == true) {
                 leftList = this.props.files.filter(file => file.similarities.length > 0)
@@ -79,14 +80,14 @@ class FileList extends Component {
                 )
             }
         }
-        else if (this.props.activeFileLeft == 0) {
+        else if (this.props.activeFileLeft  > 0) {
             leftList = this.props.files.filter(file => file.id == this.props.activeFileLeft).map((file) =>
                 <FileExpanded
                     file={file}
                     key={file.id}
                 />
             )
-        }
+        }*/
 
         // Right File 
         let rightList = ''
@@ -113,6 +114,7 @@ class FileList extends Component {
         }
 
             return (
+               
                 <div>
                     <Header />
                     <div className="row">
@@ -123,7 +125,7 @@ class FileList extends Component {
                             {this.props.activeFileLeft != -1 ? <button onClick={this.props.removeActiveFiles} style={{ float: 'right' }}>X</button> : ''}
 
                             <ul className="list-unstyled" style={styles.alignment}>
-                                {leftList}
+                                <FileLeft />
                             </ul>
                         </div>
                         {rightList}
@@ -164,4 +166,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateTopProps, mapDispatchToProps)(FileList)
-            //    {this.props.activeFileLeft == -1 ? <button onClick={this.showSimilaritiesOnly}>Filter</button> : ''}
