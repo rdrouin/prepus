@@ -17,6 +17,7 @@ export default class File extends Component {
     return (
       <div>
         <li onClick={this.setActiveFile}>{this.props.file.name} - {this.props.file.cip} - {this.props.file.size}</li>
+        {console.log(this.props.file)}
       </div>
     )
   }
