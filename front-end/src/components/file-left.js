@@ -8,7 +8,12 @@ import FileExpanded from './file-expanded'
 import File from './file'
 
 class FilesLeft extends Component {
-
+  /* constructor(props) {
+        super(props)
+        let id = ''
+        this.id = 1
+    }
+*/
     render() {
         let leftList = ''
         if (this.props.activeFileLeft == -1) {
