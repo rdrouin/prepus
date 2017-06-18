@@ -5,7 +5,8 @@ import { bindActionCreators } from 'redux'
 
 import File from './file'
 import FileExpanded from './file-expanded'
-import FileLeft from './file-left'
+import FilesLeft from './file-left'
+import FilesRight from './file-right'
 import { FileActions } from '../redux/modules/file'
 import Header from '../components/header'
 
@@ -55,64 +56,6 @@ class FileList extends Component {
                 marginTop: 20
             }
         }
-
-        // Left file
-
-     /*  let leftList = ''
-        if (this.props.activeFileLeft == -1) {
-            if (this.props.similarities == true) {
-                leftList = this.props.files.filter(file => file.similarities.length > 0)
-                leftList = leftList.map(file =>
-                    <File
-                        file={file}
-                        key={file.id}
-                        setActiveFile={this.props.setActiveFileLeft}
-                    />
-                )
-            }
-            else {
-                leftList = this.props.files.map(file =>
-                    <File
-                        file={file}
-                        key={file.id}
-                        setActiveFile={this.props.setActiveFileLeft}
-                    />
-                )
-            }
-        }
-        else if (this.props.activeFileLeft  > 0) {
-            leftList = this.props.files.filter(file => file.id == this.props.activeFileLeft).map((file) =>
-                <FileExpanded
-                    file={file}
-                    key={file.id}
-                />
-            )
-        }*/
-
-        // Right File 
-        let rightList = ''
-
-        let leftFileSimilarities = []
-
-        if (this.props.activeFileLeft == -1) {
-            rightList = ''
-        } else if (this.props.activeFileLeft != -1 && this.props.activeFileRight == -1) {
-            leftFileSimilarities = this.props.files.filter(file => file.id == this.props.activeFileLeft)[0].similarities;
-
-            let rightFilesIds = leftFileSimilarities.map(file => file.id);
-            rightFilesIds = rightFilesIds.filter((file, pos) => (rightFilesIds.indexOf(file) == pos));
-
-            if (leftFileSimilarities.length == 0) {
-                rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> Aucun plagiat détecté </div>
-            } else {
-                var leftFile = this.props.files.filter(file => file.id == this.props.activeFileLeft)
-                rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => rightFilesIds == file.id).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>
-            }
-
-        } else if (this.props.activeFileRight != -1) {
-            rightList = <div className="col-lg-5 col-lg-offset-1" style={styles.borders}><button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => file.id == this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id} />)}</ul></div>
-        }
-
             return (
                
                 <div>
@@ -125,16 +68,15 @@ class FileList extends Component {
                             {this.props.activeFileLeft != -1 ? <button onClick={this.props.removeActiveFiles} style={{ float: 'right' }}>X</button> : ''}
 
                             <ul className="list-unstyled" style={styles.alignment}>
-                                <FileLeft />
+                                <FilesLeft />
                             </ul>
                         </div>
-                        {rightList}
+                        <FilesRight />
                     </div>
                     {this.props.activeFileLeft == -1 ? <button onClick={this.loadDepot}>Load</button> : ''}
                     <br />
                     <input type="checkbox" name="vehicle" value="Car" onClick={this.showSimilaritiesOnly} />Show Similarities Only
                     <br/>
-
                     <button onClick={this.analyseDepot}>Analyse</button>
 
                 </div>

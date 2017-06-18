@@ -31,16 +31,7 @@ function append(id, cip, name, size, plagiarism) {
     }
   }
 }
-/*
-function loadDepot() {
-  return {
-    type: LOAD_DEPOT,
-    payload: {
-      id: 0
-    }
-  }
-}
-*/
+
 function setActiveFileLeft(id) {
   return {
     type: SET_ACTIVE_FILE_LEFT,
@@ -151,7 +142,7 @@ function bs(state) {
       newState.filter(file => file.id == file2)[0].similarities.push({ id: file1, percent: percent })
     }
 
-    console.log({ ...state, files: [...state.files.concat(...newState)] })
+    //console.log({ ...state, files: [...state.files.concat(...newState)] })
   })
   return { ...state, files: [...state.files.concat(...newState)] }
 
