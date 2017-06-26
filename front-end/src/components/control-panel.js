@@ -12,13 +12,13 @@ class ControlPanel extends Component {
 
     constructor(props) {
         super(props)
-        this.loadDepot = this.loadDepot.bind(this)
+        this.loadDepotIfNeeded = this.loadDepotIfNeeded.bind(this)
         this.showSimilaritiesOnly = this.showSimilaritiesOnly.bind(this)
         this.analyseDepot = this.analyseDepot.bind(this)
 
     }
-    loadDepot() {
-        this.props.loadDepot()
+    loadDepotIfNeeded() {
+        this.props.loadDepotIfNeeded(1)
     }
 
     showSimilaritiesOnly() {
@@ -33,8 +33,7 @@ class ControlPanel extends Component {
 
         return (
             <div>
-            {console.log(FileActions)}
-                {this.props.activeFileLeft == -1 ? <button onClick={this.loadDepot}>Load</button> : ''}
+                {this.props.activeFileLeft == -1 ? <button onClick={this.loadDepotIfNeeded}>Load</button> : ''}
                 <br />
                 <input type="checkbox" name="vehicle" value="Car" onClick={this.showSimilaritiesOnly} />Show Similarities Only
                     <br />
@@ -50,16 +49,14 @@ function mapStateTopProps(state) {
     return {
         activeFileLeft: state.fileReducer.activeFileLeft,
         similarities: state.fileReducer.similarities
-
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        loadDepot: FileActions.loadDepot,
+        loadDepotIfNeeded: FileActions.loadDepotIfNeeded,
         showSimilaritiesOnly: FileActions.showSimilaritiesOnly,
         analyseDepot: FileActions.analyseDepot
-
     }, dispatch)
 }
 export default connect(mapStateTopProps, mapDispatchToProps)(ControlPanel)

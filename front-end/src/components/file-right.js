@@ -49,9 +49,14 @@ class FilesRight extends Component {
         return (<div></div>)
     }
 }
-function mapStateTopProps(state) {
+function mapStateToProps(state) {
+    var currentDepot = state.fileReducer.depots.filter(depot => depot.id == state.fileReducer.activeDepot)[0]
+    var currentFiles = undefined
+    if(currentDepot != undefined){
+        currentFiles = currentDepot.files
+    }
     return {
-        files: state.fileReducer.files,
+        files: currentFiles,
         activeFileLeft: state.fileReducer.activeFileLeft,
         activeFileRight: state.fileReducer.activeFileRight,
         similarities: state.fileReducer.similarities
@@ -67,4 +72,4 @@ function mapDispatchToProps(dispatch) {
     }, dispatch)
 }
 
-export default connect(mapStateTopProps, mapDispatchToProps)(FilesRight)
+export default connect(mapStateToProps, mapDispatchToProps)(FilesRight)
