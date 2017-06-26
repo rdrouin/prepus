@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import logo from '../../images/logo.svg'
+//import logo from '../../images/logo.svg'
 
 
 export default class InvoicePreviewHeader extends Component {
@@ -27,7 +27,6 @@ export default class InvoicePreviewHeader extends Component {
                     <a href=""><span className="glyphicon glyphicon-cog navbar-right" aria-hidden="true" style={style.cog}></span></a>
                 </div>
             </nav>
-
         )
     }
 }
