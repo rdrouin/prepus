@@ -1,18 +1,25 @@
-import React, { Component } from 'react'
+import React, { PropTypes } from 'react'
+import { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
+import FilesLeft from './file-left'
+import FilesRight from './file-right'
+import ControlPanel from './control-panel'
 
-//import Depots from '../../components/depot-list'
-import Files from '../../components/file-list'
-
-import Header from '../../components/header'
-
-export default class HomeView extends Component {
-  render () {
-    return (
-      <div className='container'>
-        <Header />
-        <Files/>
-      </div>
-    )
-  }
+export default class FileList extends React.Component {
+    render() {
+        return (
+            <div>
+                <div className="row">
+                    <h4>Étudiants potentiellement en situation de plagiat</h4>
+                </div>
+                <div className="row">
+                    <FilesLeft />
+                    <FilesRight />
+                </div>
+                <ControlPanel />
+            </div>
+        )
+    }
 }
