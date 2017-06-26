@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        version="3.0">
+    <servlet>
+        <servlet-name>Similarities</servlet-name>
+        <servlet-class>ServeletSimilarities</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Similarities</servlet-name>
+        <url-pattern>/similarities/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Depot</servlet-name>
+        <servlet-class>ServeletDepot</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Depot</servlet-name>
+        <url-pattern>/depot/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Files</servlet-name>
+        <servlet-class>ServeletFiles</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Files</servlet-name>
+        <url-pattern>/files/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Analysis</servlet-name>
+        <servlet-class>ServeletAnalysis</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Analysis</servlet-name>
+        <url-pattern>/analysis/*</url-pattern>
+    </servlet-mapping>
+</web-app>
