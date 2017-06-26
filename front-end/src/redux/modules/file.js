@@ -122,7 +122,7 @@ const ACTION_HANDLERS = {
 function analyseDepot() {
   return dispatch => {
     dispatch(requestAnalysis())
-    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1`, { method: 'POST' })
+    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1`, { method: 'POST'})
   }
 }
 

@@ -8,47 +8,54 @@ import Depot from './depots'
 
 class Depots extends Component {
 
-  constructor(props) {
-    super(props)
-        this.loadDepotList = this.loadDepotList.bind(this)
-
+    constructor(props) {
+        super(props)
+            this.loadDepotList = this.loadDepotList.bind(this)
+            this.props.loadDepotList()
     }
+
     loadDepotList() {
         this.props.loadDepotList()
     }
-  render() {
-    var styles = {
-            alignment: {
-                textAlign: 'left'
-            },
-            borders: {
-                border: 1,
-                borderStyle: 'solid',
-                borderColor: 'gray',
-                borderRadius: 5,
-                marginTop: 20
+    render() {
+        var list = ''
+        var styles = {
+                alignment: {
+                    textAlign: 'left'
+                },
+                borders: {
+                    border: 1,
+                    borderStyle: 'solid',
+                    borderColor: 'gray',
+                    borderRadius: 5,
+                    marginTop: 20
+                }
+            
             }
-        }
-    return (
-      <div className="col-lg-5" style={styles.borders}>
-        <ul className="list-unstyled" style={styles.alignment}> 
-             <button onClick={this.loadDepotList}>Load</button>        
-            {this.props.depots.map(depot => <Depot />)}
-        </ul>
-      </div>
-    )
-  }
+            if (this.props.depotsList != undefined){
+
+            
+            }
+        return (
+        <div className="col-lg-5" style={styles.borders}>
+            <ul className="list-unstyled" style={styles.alignment}>
+                {this.props.depotsList.map(depot => <Depot depot={depot}/>)}
+            </ul>
+        </div>
+        )
+    }
 }
 function mapStateToProps(state) {
   return {
-    depots: state.fileReducer.depots,
-    activeDepot: state.fileReducer.activeDepot
+    depotsList: state.depotReducer.depotsList,
+    activeDepot: state.depotReducer.activeDepot
   }
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        loadDepotList: DepotActions.loadDepotList
+        loadDepotList: DepotActions.loadDepotList,
+        setActiveDepot: DepotActions.setActiveDepot
     }, dispatch)
 }
 export default connect(mapStateToProps,mapDispatchToProps)(Depots)

@@ -10,7 +10,7 @@ export default class File extends Component {
   render() {
     return (
       <div>
-        <li> Depot 1</li>
+        <li> Depot {this.props.depot}</li>
       </div>
     )
   }
