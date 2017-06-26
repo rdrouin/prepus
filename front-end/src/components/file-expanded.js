@@ -1,10 +1,9 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { Component } from 'react'
-import { connect } from 'react-redux'
 
 export default class FileExpanded extends Component {
 
-  render() {
+  render () {
     return (
       <div>
         <p>#{this.props.file.id}</p>
