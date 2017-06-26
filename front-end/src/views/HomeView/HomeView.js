@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
-
-//import Depots from '../../components/depot-list'
+// import Depots from '../../components/depot-list'
 import Files from '../../components/file-list'
 
 import Header from '../../components/header'
@@ -11,7 +10,7 @@ export default class HomeView extends Component {
     return (
       <div className='container'>
         <Header />
-        <Files/>
+        <Files />
       </div>
     )
   }
