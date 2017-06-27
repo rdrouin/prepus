@@ -1,3 +1,5 @@
+package main.java.com.simpleproject;
+
 /**
  * Created by Olivier on 2017-06-07.
  */

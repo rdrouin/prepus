@@ -1,3 +1,5 @@
+package main.java.com.simpleproject;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -11,7 +13,7 @@ public class AddResult {
     private static String passwd = "s6infoe17";
 
     public static void main(String[] args){
-       // AddResult Connect1 = new AddResult();
+       // main.java.com.simpleproject.AddResult Connect1 = new main.java.com.simpleproject.AddResult();
        // Connect1.insertResult(1, 2, 1,90,"test", 1,3,2,4);
     }
 
