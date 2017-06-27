@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux'
 import { routerReducer as router } from 'react-router-redux'
 import fileReducer from './modules/file'
-import depotReducer from './modules/depot'
+import settingsReducer from './modules/settings'
+import applicationReducer from './modules/application'
 
 export default combineReducers({
   fileReducer,
-  depotReducer,
+  settingsReducer,
+  applicationReducer,
   router
 })

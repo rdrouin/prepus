@@ -1,7 +1,4 @@
-import React, { PropTypes } from 'react'
-import { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import React from 'react'
 
 import FilesLeft from './file-left'
 import FilesRight from './file-right'
@@ -23,3 +20,4 @@ export default class FileList extends React.Component {
     )
   }
 }
+

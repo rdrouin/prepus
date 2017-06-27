@@ -1,4 +1,4 @@
-import {fetch} from 'isomorphic-fetch'
+// import {fetch} from 'isomorphic-fetch'
 
 const jsonData = `{"depot":
 {"id" : "1","files" : [{"id" : "1","name" : "Document1.pdf"},
@@ -27,15 +27,11 @@ const jsonData2 = `[{"depot":
 // Constants
 // ------------------------------------
 export const APPEND = 'APPEND'
-export const SET_ACTIVE_FILE_LEFT = 'SET_ACTIVE_FILE_LEFT'
-export const SET_ACTIVE_FILE_RIGHT = 'SET_ACTIVE_FILE_RIGHT'
-export const REMOVE_ACTIVE_FILE_LEFT = 'REMOVE_ACTIVE_FILE_LEFT'
-export const REMOVE_ACTIVE_FILE_RIGHT = 'REMOVE_ACTIVE_FILE_RIGHT'
-export const REMOVE_ACTIVE_FILES = 'REMOVE_ACTIVE_FILES'
-export const SHOW_SIMILARITIES_ONLY = 'SHOW_SIMILARITIES_ONLY'
+
 export const RECEIVE_FILES = 'RECEIVE_FILES'
 export const REQUEST_FILE = 'REQUEST_FILE'
 export const REQUEST_ANALYSIS = 'REQUEST_ANALYSIS'
+export const RECEIVE_DEPOT_LIST = 'RECEIVE_DEPOT_LIST'
 
 // ------------------------------------
 // Actions
@@ -51,43 +47,6 @@ function append (id, cip, name, size, plagiarism) {
       size: size,
       plagiarism: plagiarism
     }
-  }
-}
-
-function setActiveFileLeft (id) {
-  return {
-    type: SET_ACTIVE_FILE_LEFT,
-    id: id
-  }
-}
-
-function setActiveFileRight (id) {
-  return {
-    type: SET_ACTIVE_FILE_RIGHT,
-    id: id
-  }
-}
-
-function removeActiveFileLeft () {
-  return {
-    type: REMOVE_ACTIVE_FILE_LEFT
-  }
-}
-
-function removeActiveFileRight () {
-  return {
-    type: REMOVE_ACTIVE_FILE_RIGHT
-  }
-}
-
-function removeActiveFiles () {
-  return {
-    type: REMOVE_ACTIVE_FILES
-  }
-}
-function showSimilaritiesOnly () {
-  return {
-    type: SHOW_SIMILARITIES_ONLY
   }
 }
 
@@ -110,17 +69,19 @@ function requestAnalysis () {
     type: REQUEST_ANALYSIS
   }
 }
+function receiveDepotList (response) {
+  return {
+    type: RECEIVE_DEPOT_LIST,
+    payload: response
+  }
+}
 
 export const FileActions = {
   append,
-  setActiveFileLeft,
-  setActiveFileRight,
-  removeActiveFileLeft,
-  removeActiveFileRight,
-  removeActiveFiles,
   loadDepotIfNeeded,
-  showSimilaritiesOnly,
-  analyseDepot
+  analyseDepot,
+  receiveDepotList,
+  loadDepotList
 }
 
 // ------------------------------------
@@ -128,33 +89,27 @@ export const FileActions = {
 // ------------------------------------
 const ACTION_HANDLERS = {
   [APPEND]: (state, action) => ({ ...state, files: [...state.files, action.payload] }),
-  [SET_ACTIVE_FILE_LEFT]: (state, action) => ({ ...state, activeFileLeft: action.id }),
-  [SET_ACTIVE_FILE_RIGHT]: (state, action) => ({ ...state, activeFileRight: action.id }),
-  [REMOVE_ACTIVE_FILE_LEFT]: (state, action) => ({ ...state, activeFileLeft: -1 }),
-  [REMOVE_ACTIVE_FILE_RIGHT]: (state, action) => ({ ...state, activeFileRight: -1 }),
-  [REMOVE_ACTIVE_FILES]: (state, action) => ({ ...state, activeFileRight: -1, activeFileLeft: -1 }),
-  [SHOW_SIMILARITIES_ONLY]: (state, action) => ({ ...state, similarities: !state.similarities }),
   [REQUEST_FILE]: (state, action) => ({ ...state }),
   [REQUEST_ANALYSIS]: (state, action) => ({ ...state }),
-  [RECEIVE_FILES]: (state, action) => (bs2(state, action))
+  [RECEIVE_FILES]: (state, action) => (bs2(state, action)),
+  [RECEIVE_DEPOT_LIST]: (state, action) => bs3(state, action)
 }
 
 function analyseDepot () {
   return dispatch => {
     dispatch(requestAnalysis())
-    return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1', {method: 'POST'})
+    // return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1', {method: 'POST'})
   }
 }
 
 function loadDepot (depotId) {
-  loadDepotIfNeeded(depotId)
-  if (depotId === 1) {
+  if (depotId === '1') {
     return dispatch => {
       dispatch(requestFiles(depotId))
       var json = JSON.parse(jsonData)
       return dispatch(receiveFiles(json))
     }
-  } else if (depotId === 2) {
+  } else if (depotId === '2') {
     return dispatch => {
       dispatch(requestFiles(depotId))
       var json = JSON.parse(jsonData2)
@@ -169,10 +124,11 @@ function loadDepot (depotId) {
    }*/
 }
 
-function loadDepotIfNeeded (depotId) {
+function loadDepotIfNeeded () {
   return (dispatch, getState) => {
-    if (shouldLoadDepot(getState().fileReducer, depotId)) {
-      return dispatch(loadDepot(depotId))
+    var applicationReducer = getState().applicationReducer
+    if (shouldLoadDepot(getState().fileReducer, applicationReducer.activeDepot)) {
+      return dispatch(loadDepot(applicationReducer.activeDepot))
     }
   }
 }
@@ -205,17 +161,30 @@ function bs2 (state, action) {
 
   return { ...state, depots: [...state.depots, { id: id, files: [...newState] }] }
 }
+function loadDepotList () {
+  return dispatch => {
+    var json = JSON.parse(jsonData2)
+    return dispatch(receiveDepotList(json))
+  }
+}
+
+function bs3 (state, action) {
+  var response = action.payload
+  var depots = []
+  for (var i = 0; i < response.length; i++) {
+    depots.push({id: response[i].depot.id})
+  }
+
+  return {...state, depotsList: [...state.depotsList, ...depots]}
+}
 
 // ------------------------------------
 // Reducer
 // ------------------------------------
 
 export const initFile = {
-  activeFileLeft: -1,
-  activeFileRight: -1,
-  similarities: 0,
-  activeDepot: 1,
-  depots: []
+  depots: [],
+  depotsList: []
 }
 export default function fileReducer (state = initFile, action) {
   const handler = ACTION_HANDLERS[action.type]

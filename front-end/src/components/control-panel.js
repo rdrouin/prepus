@@ -3,53 +3,52 @@ import { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { FileActions } from '../redux/modules/file'
+import { ApplicationActions } from '../redux/modules/application'
 
 class ControlPanel extends Component {
 
   constructor (props) {
     super(props)
     this.loadDepotIfNeeded = this.loadDepotIfNeeded.bind(this)
-    this.showSimilaritiesOnly = this.showSimilaritiesOnly.bind(this)
     this.analyseDepot = this.analyseDepot.bind(this)
   }
 
   loadDepotIfNeeded () {
-    this.props.loadDepotIfNeeded(1)
-  }
-
-  showSimilaritiesOnly () {
-    this.props.showSimilaritiesOnly()
+    this.props.loadDepotIfNeeded()
   }
 
   analyseDepot () {
     this.props.analyseDepot()
   }
 
+  removeActiveDepot () {
+    this.props.removeActiveDepot()
+  }
   render () {
     return (
       <div>
-        {this.props.activeFileLeft === -1 ? <button onClick={this.loadDepotIfNeeded}>Load</button> : ''}
+        {<button onClick={this.props.removeActiveDepot}>Back to Depot List</button>}
         <br />
-        <input type="checkbox" name="vehicle" value="Car" onClick={this.showSimilaritiesOnly} />Show Similarities Only
+        {this.props.activeFileLeft === -1 ? <button onClick={this.loadDepotIfNeeded}>Refresh</button> : ''}
         <br />
         <button onClick={this.analyseDepot}>Analyse</button>
       </div>
-      )
+    )
   }
 }
 
 function mapStateTopProps (state) {
   return {
-    activeFileLeft: state.fileReducer.activeFileLeft,
-    similarities: state.fileReducer.similarities
+    activeFileLeft: state.applicationReducer.activeFileLeft,
+    similarities: state.settingsReducer.similarities
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
     loadDepotIfNeeded: FileActions.loadDepotIfNeeded,
-    showSimilaritiesOnly: FileActions.showSimilaritiesOnly,
-    analyseDepot: FileActions.analyseDepot
+    analyseDepot: FileActions.analyseDepot,
+    removeActiveDepot: ApplicationActions.removeActiveDepot
   }, dispatch)
 }
 export default connect(mapStateTopProps, mapDispatchToProps)(ControlPanel)

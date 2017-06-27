@@ -3,8 +3,11 @@ import { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { DepotActions } from '../redux/modules/depot'
+import { FileActions } from '../redux/modules/file'
+import { ApplicationActions } from '../redux/modules/application'
+
 import Depot from './depots'
+import FileList from './file-list'
 
 class Depots extends Component {
 
@@ -31,30 +34,34 @@ class Depots extends Component {
         marginTop: 20
       }
     }
-    if (this.props.depotsList !== undefined) {
-    }
 
     return (
-      <div className="col-lg-5" style={styles.borders}>
+      this.props.activeDepot === -1
+      ? <div className="col-lg-5" style={styles.borders}>
         <ul className="list-unstyled" style={styles.alignment}>
-          {this.props.depotsList.map(depot => <Depot depot={depot} />)}
+          {this.props.depotsList.map(depot => <Depot
+            depot={depot}
+            setActiveDepot={this.props.setActiveDepot}
+            key={depot.id}
+          />)}
         </ul>
       </div>
+      : <FileList />
     )
   }
 }
 
 function mapStateToProps (state) {
   return {
-    depotsList: state.depotReducer.depotsList,
-    activeDepot: state.depotReducer.activeDepot
+    depotsList: state.fileReducer.depotsList,
+    activeDepot: state.applicationReducer.activeDepot
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    loadDepotList: DepotActions.loadDepotList,
-    setActiveDepot: DepotActions.setActiveDepot
+    loadDepotList: FileActions.loadDepotList,
+    setActiveDepot: ApplicationActions.setActiveDepot
   }, dispatch)
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Depots)
