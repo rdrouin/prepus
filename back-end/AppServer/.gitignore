@@ -2,7 +2,7 @@
 .idea
 out
 target
-AppServer.iml
+*.iml
 
 
 # Mobile Tools for Java (J2ME)
