@@ -1,4 +1,8 @@
 *.class
+.idea
+out
+target
+AppServer.iml
 
 
 # Mobile Tools for Java (J2ME)
