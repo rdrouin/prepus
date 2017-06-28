@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class ServeletDepot extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        String depotNumber[] = request.getPathInfo().split("/");
+        String path = request.getPathInfo() != null ? request.getPathInfo():"/";
+        String depotNumber[] = path.split("/");
         String returnedValue = "";
 
         response.setContentType("text/json");

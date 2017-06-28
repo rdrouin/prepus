@@ -20,12 +20,10 @@ public class ServeletSimilarities extends HttpServlet {
 
         String returnedValue = "";
         String path = request.getPathInfo() != null ? request.getPathInfo():"/";
-        System.out.println(path);
         String depotNumber[] = path.split("/");
         response.setContentType("text/json");
         response.setCharacterEncoding( "UTF-8" );
 
-        System.out.println(depotNumber.length);
         if (depotNumber.length > 0)
         {
             try {
