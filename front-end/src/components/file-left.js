@@ -12,8 +12,6 @@ import File from './file'
 class FilesLeft extends Component {
   constructor (props) {
     super(props)
-    console.log("CONSTRUCTOR OF FILE LEFT")
-    console.log(this.props.activeDepot !== -1)
     if (this.props.activeDepot !== -1) {
       this.props.loadDepotIfNeeded()
     }
