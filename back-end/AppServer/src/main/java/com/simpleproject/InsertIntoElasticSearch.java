@@ -24,7 +24,7 @@ public class InsertIntoElasticSearch {
 
 
     public static void encoder(int depot) {
-            HashMap<Integer, String> filePathList = new HashMap<Integer, String>();
+
             try {
                 Class.forName("org.postgresql.Driver");
                 Connection conn = DriverManager.getConnection(url, user, passwd);
@@ -57,36 +57,20 @@ public class InsertIntoElasticSearch {
                     }
                 }
                 // Concatenate path and filename to return
-                String filePath = null;
-                String fileName = null;
                 try {
                     //connecting to ElasticSearch
                     TransportClient client = new PreBuiltTransportClient(org.elasticsearch.common.settings.Settings.EMPTY)
                             .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
                     while (result.next()) {
-                        filePath = result.getObject(pathID).toString();
-                        fileName = result.getObject(nameID).toString();
-                        filePathList.put(Integer.parseInt(result.getObject(ID).toString()), filePath + fileName);
-                        File file = new File(filePath + fileName);
-                        if (!file.exists())
-                        {
-                            System.out.println("erreur");
-                        }
-                        //Reading and encoding files
-                        byte fileContent[] = Files.readAllBytes(file.toPath());
-                        String result64 = javax.xml.bind.DatatypeConverter.printBase64Binary(fileContent);
-
                         //push files in elasticSearch
                         String json = "{" +
-                                "\"data\":\""+result64+"\"" +
+                                "\"data\":\""+PdfTo64.encoder(result.getObject(pathID).toString() + result.getObject(nameID).toString())+"\"" +
                                 "}";
                         IndexResponse response = client.prepareIndex(Integer.toString(depot), "pdf", result.getObject(ID).toString())
                                 .setSource(json).setPipeline("attachment")
                                 .get();
                     }
                     client.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
