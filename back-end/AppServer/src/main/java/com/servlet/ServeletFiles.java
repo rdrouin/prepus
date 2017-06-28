@@ -1,4 +1,7 @@
-package main.java.com.simpleproject;
+package main.java.com.servlet;
+
+import main.java.com.simpleproject.FileAnalysis;
+import main.java.com.simpleproject.FileDescription;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,4 +1,4 @@
-package main.java.com.simpleproject;
+package main.java.com.servlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+
+import main.java.com.simpleproject.Similarity;
+import main.java.com.simpleproject.FileAnalysis;
 
 /**
  * Created by Olivier on 2017-06-07.
