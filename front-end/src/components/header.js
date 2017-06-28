@@ -1,8 +1,14 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-// import logo from '../../images/logo.svg'
+import { ApplicationActions } from '../redux/modules/application'
 
-export default class InvoicePreviewHeader extends Component {
+class Header extends Component {
+  constructor (props) {
+    super(props)
+    this.showSettings = this.props.showSettings.bind(this)
+  }
   render () {
     let style = {
       backgroundColor: 'blue',
@@ -18,17 +24,32 @@ export default class InvoicePreviewHeader extends Component {
       }
     }
     return (
-      <nav className="navbar navbar-default navbar-fixed-top">
-        <div className="container">
-          <div className="navbar-header navbar-left">
-            <h1 style={style.h1}>Anti-Plagiat</h1>
+      <div>
+        <nav className="navbar navbar-default navbar-fixed-top">
+          <div className="container">
+            <div className="navbar-header navbar-left">
+              <h1 style={style.h1}>Anti-Plagiat</h1>
+            </div>
+            <a onClick={this.props.showSettings}><span className="glyphicon glyphicon-cog navbar-right" aria-hidden="true" style={style.cog}></span></a>
           </div>
-          <a href="">
-            <span className="glyphicon glyphicon-cog navbar-right" aria-hidden="true" style={style.cog}>
-            </span>
-          </a>
-        </div>
-      </nav>
+        </nav>
+      </div>
     )
   }
 }
+function mapStateToProps (state) {
+  return {
+    showSettings: state.applicationReducer.showSettings
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({
+    setActiveFileRight: ApplicationActions.setActiveFileRight,
+    removeActiveFileRight: ApplicationActions.removeActiveFileRight,
+    removeActiveFiles: ApplicationActions.removeActiveFiles,
+    showSettings: ApplicationActions.showSettings
+  }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)
