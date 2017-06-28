@@ -39,7 +39,7 @@ public class Depot {
     {
         List<String[]> table =  PostgreContacter.call("select document.id, document.nom from iteration2.document join iteration2.remise on remise.id = document.rem_id where remise.id = " + Integer.toString(id));
 
-        String returnedValue = "{\"depot\":{\"id\":\":" + Integer.toString(id) + "\", \"files\":[";
+        String returnedValue = "{\"depot\":{\"id\":\"" + Integer.toString(id) + "\", \"files\":[";
         for( String[] row: table ){
             returnedValue += str(row[0], row[1]) + ",";
         }

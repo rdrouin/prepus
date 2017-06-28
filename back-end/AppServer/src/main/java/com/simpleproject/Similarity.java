@@ -44,13 +44,19 @@ public class Similarity {
 
     public static String str(String[] list)
     {
-        return "{\"file1\":\"" + list[0] + "\",\"file2\":\"" + list[1] + "\",\"percent\":\"" + list[2] + "\",\"type\":\"" + list[3] + "\"}";
+        return "{\"file1\":\"" + list[0] +
+                "\",\"file2\":\"" + list[1] +
+                "\",\"percent\":\"" + list[2] +
+                "\",\"type\":\"" + list[3] +
+                "\",\"text1\":\"" + list[4] +
+                "\",\"text2\":\"" + list[5] +
+                "\"}";
     }
 
     public static String getSimilarities(String remise_id)
     {
         String returnedValue = "\"similarities\":[";
-        List<String[]> table =  PostgreContacter.call("select distinct ressemble.id, ressemble.doc_id, ressemble.pourcentage, ressemble.met_id from iteration2.ressemble\n" +
+        List<String[]> table =  PostgreContacter.call("select distinct ressemble.id, ressemble.doc_id, ressemble.pourcentage, ressemble.met_id, ressemble.text1, ressemble.text2 from iteration2.ressemble\n" +
                 "join iteration2.document on ressemble.id = document.id or ressemble.doc_id = document.id\n" +
                 "join iteration2.remise on remise.id = document.rem_id where remise.id = " + remise_id);
         for( String[] row: table ){
