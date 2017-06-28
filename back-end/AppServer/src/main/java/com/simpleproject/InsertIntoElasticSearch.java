@@ -6,11 +6,14 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Created by Olivier on 2017-06-26.
@@ -63,12 +66,15 @@ public class InsertIntoElasticSearch {
                             .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
                     while (result.next()) {
                         //push files in elasticSearch
-                        String json = "{" +
-                                "\"data\":\""+PdfTo64.encoder(result.getObject(pathID).toString() + result.getObject(nameID).toString())+"\"" +
-                                "}";
-                        IndexResponse response = client.prepareIndex(Integer.toString(depot), "pdf", result.getObject(ID).toString())
-                                .setSource(json).setPipeline("attachment")
-                                .get();
+                        String path = GetPath.path() + result.getObject(pathID).toString() + result.getObject(nameID).toString();
+                        if(new File(path).exists()) {
+                            String json = "{" +
+                            "\"data\":\"" + PdfTo64.encoder(GetPath.path() + result.getObject(pathID).toString() + result.getObject(nameID).toString()) + "\"" +
+                            "}";
+                            IndexResponse response = client.prepareIndex(Integer.toString(depot), "pdf", result.getObject(ID).toString())
+                            .setSource(json).setPipeline("attachment")
+                            .get();
+                        }
                     }
                     client.close();
                 } catch (JSONException e) {

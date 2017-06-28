@@ -2,19 +2,16 @@ package main.java.com.simpleproject; /**
  * Created by emilearseneault on 2017-06-05.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import com.simpleproject.GetPath;
+import com.simpleproject.InsertIntoElasticSearch;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FileAnalysis {
 
@@ -141,10 +138,11 @@ public class FileAnalysis {
             // Concatenate path and filename to return
             String filePath = null;
             String fileName = null;
+
             while(result.next()) {
                     filePath = result.getObject(pathID).toString();
                     fileName = result.getObject(nameID).toString();
-                    filePathList.put(Integer.parseInt(result.getObject(ID).toString()),filePath + fileName);
+                    filePathList.put(Integer.parseInt(result.getObject(ID).toString()), GetPath.path() + filePath + fileName);
 
             }
 
