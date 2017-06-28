@@ -1,4 +1,4 @@
-package main.java.com.simpleproject;
+package main.java.com.servlet;
 
 import com.simpleproject.InsertIntoElasticSearch;
 
@@ -9,14 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import main.java.com.simpleproject.FileAnalysis;
+
 /**
  * Created by Olivier on 2017-06-07.
  */
 public class ServeletAnalysis extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-
-
         String id = req.getParameter("depot");
         InsertIntoElasticSearch.encoder(Integer.parseInt(id));
         FileAnalysis.launchAnalysis(Integer.parseInt(id));
