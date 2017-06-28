@@ -1,4 +1,4 @@
-/**
+package main.java.com.simpleproject; /**
  * Created by emilearseneault on 2017-06-05.
  */
 
