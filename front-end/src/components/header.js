@@ -30,7 +30,9 @@ class Header extends Component {
             <div className="navbar-header navbar-left">
               <h1 style={style.h1}>Anti-Plagiat</h1>
             </div>
-            <a onClick={this.props.showSettings}><span className="glyphicon glyphicon-cog navbar-right" aria-hidden="true" style={style.cog}></span></a>
+            <a onClick={this.props.showSettings}>
+              <span className="glyphicon glyphicon-cog navbar-right" aria-hidden="true" style={style.cog}></span>
+            </a>
           </div>
         </nav>
       </div>
