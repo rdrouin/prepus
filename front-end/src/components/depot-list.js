@@ -13,12 +13,7 @@ class DepotList extends Component {
 
   constructor (props) {
     super(props)
-    this.loadDepotList = this.loadDepotList.bind(this)
-    this.props.loadDepotList()
-  }
-
-  loadDepotList () {
-    this.props.loadDepotList()
+    this.props.loadDepotsList()
   }
 
   render () {
@@ -39,7 +34,7 @@ class DepotList extends Component {
       this.props.activeDepot === -1
       ? <div className="col-lg-5" style={styles.borders}>
         <ul className="list-unstyled" style={styles.alignment}>
-          {this.props.depotsList.map(depot => <Depot
+          {this.props.depots.map(depot => <Depot
             depot={depot}
             setActiveDepot={this.props.setActiveDepot}
             key={depot.id}
@@ -53,14 +48,14 @@ class DepotList extends Component {
 
 function mapStateToProps (state) {
   return {
-    depotsList: state.fileReducer.depotsList,
+    depots: state.fileReducer.depots,
     activeDepot: state.applicationReducer.activeDepot
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    loadDepotList: FileActions.loadDepotList,
+    loadDepotsList: FileActions.loadDepotsList,
     setActiveDepot: ApplicationActions.setActiveDepot
   }, dispatch)
 }

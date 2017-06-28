@@ -12,6 +12,8 @@ import File from './file'
 class FilesLeft extends Component {
   constructor (props) {
     super(props)
+    console.log("CONSTRUCTOR OF FILE LEFT")
+    console.log(this.props.activeDepot !== -1)
     if (this.props.activeDepot !== -1) {
       this.props.loadDepotIfNeeded()
     }
@@ -69,6 +71,7 @@ function mapStateToProps (state) {
   return {
     files: currentFiles,
     activeFileLeft: state.applicationReducer.activeFileLeft,
+    activeDepot: state.applicationReducer.activeDepot,
     similarities: state.settingsReducer.similarities
   }
 }
