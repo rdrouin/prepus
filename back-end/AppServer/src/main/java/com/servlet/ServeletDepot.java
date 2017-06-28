@@ -17,6 +17,9 @@ public class ServeletDepot extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         String depotNumber[] = request.getPathInfo().split("/");
         String returnedValue = "";
+
+        response.setContentType("text/json");
+        response.setCharacterEncoding( "UTF-8" );
         if (depotNumber.length >= 1)
         {
             try {
@@ -24,8 +27,9 @@ public class ServeletDepot extends HttpServlet {
             }
             catch (NumberFormatException e)
             {
-                System.out.println("Could not parse " +  depotNumber[1] + " as an integer.");
-                // Respond with a 500 error code
+                returnedValue = "BAD REQUEST: Could not parse \"" +  depotNumber[1] + "\" as an integer.";
+                response.setContentType("text/plain");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
         }
         else
@@ -33,8 +37,7 @@ public class ServeletDepot extends HttpServlet {
             returnedValue = Depot.GetAllDepot();
         }
 
-        response.setContentType("text/json");
-        response.setCharacterEncoding( "UTF-8" );
+
         PrintWriter out = response.getWriter();
         out.println(returnedValue);
     }
