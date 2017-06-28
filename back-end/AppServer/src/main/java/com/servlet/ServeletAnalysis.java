@@ -15,8 +15,6 @@ import main.java.com.simpleproject.FileAnalysis;
 public class ServeletAnalysis extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-
-
         String id = req.getParameter("depot");
         FileAnalysis.launchAnalysis(Integer.parseInt(id));
         res.setContentType("text/plain");

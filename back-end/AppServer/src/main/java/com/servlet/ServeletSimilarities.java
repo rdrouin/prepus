@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import main.java.com.simpleproject.Depot;
 import main.java.com.simpleproject.Similarity;
 import main.java.com.simpleproject.FileAnalysis;
 
@@ -17,22 +18,37 @@ import main.java.com.simpleproject.FileAnalysis;
 public class ServeletSimilarities extends HttpServlet {
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
 
-        List<Similarity> similaritiesList = FileAnalysis.getSimilarities();
-        String returnedValue = "{\"similarities\":[";
-        for(int i=0; i<similaritiesList.size(); i++) {
-            returnedValue +=("{\"file1\":\"" +similaritiesList.get(i).getFile1() + "\"," +
-                    "\"file2\":\"" +similaritiesList.get(i).getFile2() + "\"," +
-                    "\"percent\":\"" +similaritiesList.get(i).getPercent() + "\"," +
-                    "\"type\":\"" +similaritiesList.get(i).getType() + "\"},"
-            );
-        }
-        returnedValue = returnedValue.substring(0,returnedValue.length()-1);
-        returnedValue += "]}";
+        String returnedValue = "";
+        String path = request.getPathInfo() != null ? request.getPathInfo():"/";
+        System.out.println(path);
+        String depotNumber[] = path.split("/");
+        response.setContentType("text/json");
+        response.setCharacterEncoding( "UTF-8" );
 
-            response.setContentType("text/json");
-            response.setCharacterEncoding( "UTF-8" );
-            PrintWriter out = response.getWriter();
-            out.println(returnedValue);
+        System.out.println(depotNumber.length);
+        if (depotNumber.length > 0)
+        {
+            try {
+                if (Integer.parseInt(depotNumber[1]) > 0) {
+                    returnedValue = "{" + Similarity.getSimilarities(depotNumber[1]) + "}";
+                }
+            }
+            catch (NumberFormatException e)
+            {
+                returnedValue = "BAD REQUEST: Could not parse \"" +  depotNumber[1] + "\" as an integer.";
+                response.setContentType("text/plain");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        }
+        else
+        {
+            returnedValue = "BAD REQUEST: \"" +  request.getRequestURI() + "\" is not a valid path.";
+            response.setContentType("text/plain");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        PrintWriter out = response.getWriter();
+        out.println(returnedValue);
 
 
 

@@ -47,21 +47,7 @@ public class Depot {
         {
             returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
         }
-        returnedValue += "],\"similarities\":[";
-
-        // TODO drouinr 2017-06-27 Replace the following with a GET request to /similarities
-        table =  PostgreContacter.call("select distinct ressemble.id, ressemble.doc_id, ressemble.pourcentage, ressemble.met_id from iteration2.ressemble\n" +
-                "join iteration2.document on ressemble.id = document.id or ressemble.doc_id = document.id\n" +
-                "join iteration2.remise on remise.id = document.rem_id where remise.id = " + Integer.toString(id));
-        for( String[] row: table ){
-            returnedValue += sim(row) + ",";
-        }
-        if (table.size() > 0)
-        {
-            returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
-        }
-        returnedValue += "]}}";
-
+        returnedValue += "]," + Similarity.getSimilarities(Integer.toString(id)) + "}}";
 
         return returnedValue;
 

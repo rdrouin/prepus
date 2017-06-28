@@ -1,5 +1,7 @@
 package main.java.com.simpleproject;
 
+import java.util.List;
+
 /**
  * Created by Olivier on 2017-06-07.
  */
@@ -38,5 +40,27 @@ public class Similarity {
 
     public int getType() {
         return type;
+    }
+
+    public static String str(String[] list)
+    {
+        return "{\"file1\":\"" + list[0] + "\",\"file2\":\"" + list[1] + "\",\"percent\":\"" + list[2] + "\",\"type\":\"" + list[3] + "\"}";
+    }
+
+    public static String getSimilarities(String remise_id)
+    {
+        String returnedValue = "\"similarities\":[";
+        List<String[]> table =  PostgreContacter.call("select distinct ressemble.id, ressemble.doc_id, ressemble.pourcentage, ressemble.met_id from iteration2.ressemble\n" +
+                "join iteration2.document on ressemble.id = document.id or ressemble.doc_id = document.id\n" +
+                "join iteration2.remise on remise.id = document.rem_id where remise.id = " + remise_id);
+        for( String[] row: table ){
+            returnedValue += str(row) + ",";
+        }
+        if (table.size() > 0)
+        {
+            returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
+        }
+        returnedValue += "]";
+        return returnedValue;
     }
 }
