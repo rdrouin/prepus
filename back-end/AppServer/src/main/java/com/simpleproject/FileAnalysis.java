@@ -103,8 +103,8 @@ public class FileAnalysis {
             Statement state = conn.createStatement();
 
             //Query d'insert
-            String remiseQuery = "SELECT id, location, nom from itération1.document WHERE rem_id = " + remiseID + ";";
-            String noremiseQuery = "SELECT id, location, nom from itération1.document;";
+            String remiseQuery = "SELECT id, location, nom from iteration2.document WHERE rem_id = " + remiseID + ";";
+            String noremiseQuery = "SELECT id, location, nom from iteration2.document;";
             String query = null;
 
             if (remiseID == 0) {
