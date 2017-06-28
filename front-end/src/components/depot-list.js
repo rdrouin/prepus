@@ -6,10 +6,10 @@ import { bindActionCreators } from 'redux'
 import { FileActions } from '../redux/modules/file'
 import { ApplicationActions } from '../redux/modules/application'
 
-import Depot from './depots'
+import Depot from './depot'
 import FileList from './file-list'
 
-class Depots extends Component {
+class DepotList extends Component {
 
   constructor (props) {
     super(props)
@@ -64,4 +64,4 @@ function mapDispatchToProps (dispatch) {
     setActiveDepot: ApplicationActions.setActiveDepot
   }, dispatch)
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Depots)
+export default connect(mapStateToProps, mapDispatchToProps)(DepotList)

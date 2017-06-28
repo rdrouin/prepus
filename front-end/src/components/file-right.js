@@ -27,17 +27,36 @@ class FilesRight extends Component {
     if (this.props.activeFileLeft !== -1 && this.props.activeFileRight === -1) {
       leftFileSimilarities = this.props.files.filter(file => file.id === this.props.activeFileLeft)[0].similarities
 
+      // filter removes duplicates
       let rightFilesIds = leftFileSimilarities.map(file => file.id)
       rightFilesIds = rightFilesIds.filter((file, pos) => (rightFilesIds.indexOf(file) === pos))
-
+  
       if (leftFileSimilarities.length === 0) {
-        return (<div className="col-lg-5 col-lg-offset-1" style={styles.borders}> Aucun plagiat détecté </div>)
-      } else {
-        // var leftFile = this.props.files.filter(file => file.id == this.props.activeFileLeft)
-        return (<div className="col-lg-5 col-lg-offset-1" style={styles.borders}><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => rightFilesIds === file.id).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}</ul></div>)
+        return (
+          <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> 
+            Aucun plagiat détecté 
+          </div>
+        )
+      } 
+      else {
+        return (
+          <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
+            <ul className="list-unstyled" style={styles.alignment}> 
+              {this.props.files.filter(file => rightFilesIds.some(id => id === file.id)).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}
+            </ul>
+          </div>
+        )
       }
-    } else if (this.props.activeFileRight !== -1) {
-      return (<div className="col-lg-5 col-lg-offset-1" style={styles.borders}><button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button><ul className="list-unstyled" style={styles.alignment}> {this.props.files.filter(file => file.id === this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id} />)}</ul></div>)
+    } 
+    else if (this.props.activeFileRight !== -1) {
+      return (
+        <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
+          <button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button>
+          <ul className="list-unstyled" style={styles.alignment}> 
+            {this.props.files.filter(file => file.id === this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id} />)}
+          </ul>
+        </div>
+      )
     }
     return (<div></div>)
   }
@@ -49,6 +68,8 @@ function mapStateToProps (state) {
 
   if (currentDepot !== undefined) {
     currentFiles = currentDepot.files
+  
+    
   }
   return {
     files: currentFiles,

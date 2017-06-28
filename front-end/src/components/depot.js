@@ -1,7 +1,7 @@
 import React from 'react'
 import { Component } from 'react'
 
-export default class File extends Component {
+export default class Depot extends Component {
   constructor (props) {
     super(props)
     this.setActiveDepot = this.setActiveDepot.bind(this)

@@ -141,8 +141,6 @@ function shouldLoadDepot (state, depotId) {
 function bs2 (state, action) {
   var newState = []
   var response = action.payload
-
-  // console.log("SERVER DATA!!")
   var files = response.depot.files
   var similarities = response.depot.similarities
   var id = response.depot.id
