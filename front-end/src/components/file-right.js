@@ -33,16 +33,19 @@ class FilesRight extends Component {
   
       if (leftFileSimilarities.length === 0) {
         return (
-          <div className="col-lg-5 col-lg-offset-1" style={styles.borders}> 
-            Aucun plagiat détecté 
+          <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
+            Aucun plagiat détecté
           </div>
         )
-      } 
-      else {
+      } else {
         return (
           <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
-            <ul className="list-unstyled" style={styles.alignment}> 
-              {this.props.files.filter(file => rightFilesIds.some(id => id === file.id)).map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)}
+            <ul className="list-unstyled" style={styles.alignment}>
+              {
+                this.props.files
+                .filter(file => rightFilesIds.some(id => id === file.id))
+                .map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)
+              }
             </ul>
           </div>
         )
@@ -52,8 +55,12 @@ class FilesRight extends Component {
       return (
         <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
           <button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button>
-          <ul className="list-unstyled" style={styles.alignment}> 
-            {this.props.files.filter(file => file.id === this.props.activeFileRight).map((file) => <FileExpanded file={file} key={file.id} />)}
+          <ul className="list-unstyled" style={styles.alignment}>
+            {
+              this.props.files
+              .filter(file => file.id === this.props.activeFileRight)
+              .map((file) => <FileExpanded file={file} key={file.id} />)
+            }
           </ul>
         </div>
       )
@@ -71,6 +78,7 @@ function mapStateToProps (state) {
   
     
   }
+
   return {
     files: currentFiles,
     activeFileLeft: state.applicationReducer.activeFileLeft,

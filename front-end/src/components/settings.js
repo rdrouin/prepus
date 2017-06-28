@@ -38,7 +38,10 @@ class Settings extends Component {
           <button onClick={this.props.showSettings} style={{ float: 'right' }}>X</button>
           <div className="col-lg-6" style={styles.borders}>
             <ul className="list-unstyled" style={styles.alignment}>
-              <input type="checkbox" name="vehicle" value="Car" onClick={this.showSimilaritiesOnly} defaultChecked={this.props.similarities ? 'checked' : ''} />Show Similarities Only
+              <input type="checkbox" name="vehicle" value="Car"
+                onClick={this.showSimilaritiesOnly}
+                defaultChecked={this.props.similarities ? 'checked' : ''} />
+              <span>Show Similarities Only</span>
             </ul>
           </div>
         </div>
