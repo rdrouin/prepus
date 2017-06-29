@@ -6,7 +6,7 @@
         version="3.0">
     <servlet>
         <servlet-name>Similarities</servlet-name>
-        <servlet-class>main.java.com.simpleproject.ServeletSimilarities</servlet-class>
+        <servlet-class>main.java.com.servlet.ServeletSimilarities</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -15,7 +15,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Depot</servlet-name>
-        <servlet-class>main.java.com.simpleproject.ServeletDepot</servlet-class>
+        <servlet-class>main.java.com.servlet.ServeletDepot</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -24,7 +24,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Files</servlet-name>
-        <servlet-class>main.java.com.simpleproject.ServeletFiles</servlet-class>
+        <servlet-class>main.java.com.servlet.ServeletFiles</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -33,7 +33,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Analysis</servlet-name>
-        <servlet-class>main.java.com.simpleproject.ServeletAnalysis</servlet-class>
+        <servlet-class>main.java.com.servlet.ServeletAnalysis</servlet-class>
     </servlet>
 
     <servlet-mapping>
