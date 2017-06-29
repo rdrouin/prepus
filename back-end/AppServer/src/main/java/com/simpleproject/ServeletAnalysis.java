@@ -1,6 +1,6 @@
 package main.java.com.simpleproject;
 
-import com.simpleproject.InsertIntoElasticSearch;
+import main.java.com.simpleproject.InsertIntoElasticSearch;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -2,16 +2,19 @@ package main.java.com.simpleproject; /**
  * Created by emilearseneault on 2017-06-05.
  */
 
-import com.simpleproject.GetPath;
-import com.simpleproject.InsertIntoElasticSearch;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FileAnalysis {
 
@@ -103,8 +106,8 @@ public class FileAnalysis {
             Statement state = conn.createStatement();
 
             //Query d'insert
-            String remiseQuery = "SELECT id, location, nom from iteration2.document WHERE rem_id = " + remiseID + ";";
-            String noremiseQuery = "SELECT id, location, nom from iteration2.document;";
+            String remiseQuery = "SELECT id, location, nom from itération1.document WHERE rem_id = " + remiseID + ";";
+            String noremiseQuery = "SELECT id, location, nom from itération1.document;";
             String query = null;
 
             if (remiseID == 0) {
@@ -138,11 +141,10 @@ public class FileAnalysis {
             // Concatenate path and filename to return
             String filePath = null;
             String fileName = null;
-
             while(result.next()) {
                     filePath = result.getObject(pathID).toString();
                     fileName = result.getObject(nameID).toString();
-                    filePathList.put(Integer.parseInt(result.getObject(ID).toString()), GetPath.path() + filePath + fileName);
+                    filePathList.put(Integer.parseInt(result.getObject(ID).toString()),filePath + fileName);
 
             }
 
@@ -277,7 +279,7 @@ public class FileAnalysis {
                 if (!entry1.getKey().equals(entry2.getKey()))
                 if (fileSizes.get(entry1.getKey()).equals(fileSizes.get(entry2.getKey())))
                 {
-                    AddResult.insertResult(entry1.getKey(),entry2.getKey(),1,100, fileSizes.get(entry2.getKey()).toString() ,0,0,0,0 );
+                    AddResult.insertResult(entry1.getKey(),entry2.getKey(),1,100, fileSizes.get(entry2.getKey()).toString() ,"","" );
                     System.out.println(entry1.getKey() +"  "+ entry2.getKey()+"  "+ fileSizes.get(entry2.getKey()).toString() );
                 }
             }

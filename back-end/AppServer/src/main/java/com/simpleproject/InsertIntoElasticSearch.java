@@ -1,12 +1,19 @@
-package com.simpleproject;
+package main.java.com.simpleproject;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.ScriptService;
+import org.elasticsearch.script.ScriptType;
+import org.elasticsearch.script.mustache.SearchTemplateRequestBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,13 +135,44 @@ public class InsertIntoElasticSearch {
                         // Final
                         System.out.println(words.length / 10);
                         for (int j =0; j < search.size(); j++) {
-                            System.out.println(search.get(j));
+
+                            Map<String, Object> template_params = new HashMap<>();
+                            template_params.put("param_gender", search.get(j));
+                            SearchResponse res = new SearchTemplateRequestBuilder(client)
+                                    .setScript("{\n  \"query\" : {\n" +
+                                            "            \"match_phrase\" : {\n" +
+                                            "                \"attachment.content\" : \"{{param_gender}}\"\n" +
+                                            "            }\n" +
+                                            "        }\n}")
+                                    .setScriptType(ScriptType.INLINE)
+                                    .setScriptParams(template_params)
+                                    //.setScript("template_gender")
+                                    //.setScriptType(ScriptType.FILE)
+                                    //.setScriptParams(template_params)
+                                    .setRequest(new SearchRequest())
+                                    .get()
+                                    .getResponse();
 //                            SearchResponse res = client.prepareSearch(travail_id)
 //
-//                                    .setQuery(QueryBuilders.queryStringQuery(search.get(j)))                 // Query
+//                                    .setQuery(QueryBuilders.queryStringQuery(search.get(j))).setSearchType("match_phrase")                 // Query
 //                                    .get();
-//                            String testboo = String.valueOf(res.getHits());
+                            String testboo = String.valueOf(res.getHits());
 
+                            SearchHits hits = res.getHits();
+
+                            for (SearchHit hit : hits) {
+                                //Map<String, SearchHitField> fields = hit.getFields();
+                                //SearchHitField field = fields.get("id");
+
+                                if(!hit.getId().equals(item)) {
+                                    AddResult.insertResult(Integer.parseInt(item),Integer.parseInt(hit.getId()),2,(int)(hit.getScore()), "elastic" ,search.get(j),search.get(j) );
+                                    System.out.println(search.get(j)+ "  "+ item);
+                                    System.out.println(hit.getId());
+                                    System.out.println( hit.getScore());
+                                }
+                            }
+                            //JSONObject.internalResponse
+                            //System.out.println(res.internalResponse);
                         }
                     }
                     client.close();
