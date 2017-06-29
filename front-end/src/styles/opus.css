@@ -1,0 +1,283 @@
+/*
+ * Copyright 2015, 2016 Département de Génie Électrique et Génie Informatique (GEGI) de l'Université de Sherbrooke (UdeS).
+ * Tous droits réservés / All rights reserved.
+ */
+
+/* Add css rules here for your application. */
+
+.tile{
+	cursor: pointer;
+}
+
+.egi .tile{
+	box-shadow: 5px 5px 8px #888888;
+}
+
+.tile-container.egi .tile{
+	min-height: 100px;
+	background-color: #add8c3;
+	color: #3f7f5f;
+}
+
+.tile-container.egi .tile .header{
+	font-size: 1.6em !important;
+	padding: 10px;
+}
+
+.tile-container.egi .tile .description{
+	padding: 10px;
+	min-height: 50px;
+	background-color: #daf2e6;
+	color: #3f7f5f;
+}
+
+.tile-container.egi .tile p{
+	margin: 0;
+}
+
+.dropdown-menu.bookmark{
+	width: 200px;
+	max-height: 350px;
+}
+
+.change-log li{
+	list-style-type: decimal-leading-zero;
+}
+
+/* Events Dropdown */
+
+.dropdown.open .dropdown-menu.events-dropdown {
+    border-radius: 1em;
+    max-height: unset;
+    max-width: unset;
+    overflow: hidden;
+    padding: 0;
+    right: -1em;
+    width: 300px;
+}
+
+/* Events container */
+
+.events {
+    height: 350px;
+    margin: 1em 1px 0 1em;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.events::before {
+    background: linear-gradient(#118855, transparent);
+    content: "";
+    height: 2em;
+    position: absolute;
+    width: 268px;
+}
+
+.events + .actions {
+    padding: 1em;
+}
+
+.events + .actions::before {
+    background: linear-gradient(transparent, #118855);
+    bottom: 62px;
+    content: "";
+    height: 2em;
+    position: absolute;
+    width: 268px;
+}
+
+/* Event */
+
+.event {
+    border-radius: 1em 0 0 1em;
+	color: #eee;
+    display: flex;
+    font-size: 0.9em;
+    margin: 1em 0;
+    padding: .75em .5em;
+}
+
+.event:hover,
+.event.unseen:hover {
+    background-color: #229955;
+}
+
+.event.unseen {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.event a p {
+	color: #eee;
+    width: 100%;
+}
+
+.event a.disabled {
+    pointer-events: none;
+}
+
+.event i {
+    margin-top: .3ex;
+    padding: 0 5px;
+    position: unset !important;
+}
+
+.event i.seen {
+    float: left;
+    padding-right: .5em;
+}
+
+.event i.unsubscribe {
+    float: right;
+    margin-left: auto;
+    padding-left: .5em;
+}
+
+.event img.event-profile-picture,
+.alert img.event-profile-picture{
+	float: left;
+	margin-right: 10px;
+}
+
+.event img.event-profile-picture{
+	max-width: 40px;
+	max-height: 40px;
+}
+
+.alert img.event-profile-picture,
+.alert img{
+	max-width: 60px;
+	max-height: 60px;
+}
+
+.event .date {
+    text-align: right;
+    font-size: smaller;
+    font-weight: bold;
+}
+
+.modal .unsubscribe-message {
+    margin: 2em;
+    text-align: center;
+}
+
+.search-result div{
+	margin-bottom: 15px;
+}
+
+@media only screen and (max-width : 651px) {
+   /* Small desktop / ipad */
+    .search,
+    .search ul{
+		width: 100%;
+		padding-bottom: 10px;
+   }
+}
+
+@media only screen and (min-width : 650px) {
+   /* Small desktop / ipad */
+   .search-result{
+		width: 80%;
+   }
+}
+
+.eg-dashboard .section{
+	margin-bottom: 30px;
+}
+
+.eg-dashboard .section>h3{
+	display: block;
+	width: 100%;
+	padding: 0;
+	margin-bottom: 20px;
+	border: 0;
+	border-bottom: 1px solid #e5e5e5;
+	color: #333;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 21px;
+}
+
+.eg-dashboard .section>h3>a{
+	margin-left: 5px;
+	font-size: 0.8em;
+}
+
+
+/******************************** BEGIN SEARCHBAR ********************************/
+/* source : http://codepen.io/CBeghin/pen/HeuiF */
+
+.wrap-searchbar {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	position: relative;
+	top: 8px;
+}
+
+.wrap-searchbar input[type="text"] {
+	color: #f2f2f2;
+	opacity: 0.75;
+	display: inline-block;
+	font-weight: 100;
+	border: none;
+	outline: none;
+	padding: 3px;
+	padding-right: 20px;
+	width: 0px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: none;
+	z-index: 3;
+	transition: width .4s cubic-bezier(0.000, 0.795, 0.000, 1.000);
+	cursor: pointer;
+}
+
+.wrap-searchbar .input-group button.btn-link{
+	color: #f2f2f2;
+}
+
+.wrap-searchbar input[type="text"]:focus:hover,
+.in .wrap-searchbar input[type="text"]{
+	border-bottom: 1px solid #BBB;
+}
+
+.wrap-searchbar input[type="text"]:focus,
+.in .wrap-searchbar input[type="text"]{
+	width: 175px;
+	z-index: 1;
+	border-bottom: 1px solid #BBB;
+	cursor: text;
+}
+
+.wrap-searchbar input::-webkit-input-placeholder{
+	color: #f2f2f2;
+}
+
+.wrap-searchbar input:-moz-placeholder {
+	color: #f2f2f2;
+}
+
+.wrap-searchbar input::-moz-placeholder {
+	color: #f2f2f2;
+}
+
+.wrap-searchbar input:-ms-input-placeholder {
+	color: #f2f2f2;
+}
+
+@media (max-width: 767px) {
+	.wrap-searchbar {
+		top: 0;
+	}
+
+	.input-group button.btn-link{
+		right: 55px;
+	}
+
+	.wrap-searchbar input[type="text"]{
+		left: 15px;
+	}
+}
+
+
+/******************************** END SEARCHBAR ********************************/
