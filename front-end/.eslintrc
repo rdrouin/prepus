@@ -28,6 +28,7 @@
     "no-unsafe-finally": 0,
     "no-useless-computed-key": 0,
     "no-useless-escape": 0,
+    "no-undef": 0,
     "react/prop-types": 0,
     "key-spacing": 0
   }

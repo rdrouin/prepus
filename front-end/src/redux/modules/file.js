@@ -1,5 +1,5 @@
 // import {fetch} from 'isomorphic-fetch'
-
+/*
 const jsonData = `{"depot":
 {"id" : "1","files" : [{"id" : "1","name" : "Document1.pdf"},
 {"id" : "2","name" : "travaux2.pdf"},{"id" : "5","name" : "belo2302.pdf"},
@@ -27,7 +27,7 @@ const jsonDepotsList = `{"depots":[
   {"id": "2","name":"Rapport final"},
   {"id": "3","name":"Rapport labo"}
 ]}`
-
+*/
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -113,7 +113,7 @@ function loadDepot (depotId) {
     }
   } */
   return dispatch => {
-     dispatch(requestDepot())
+    dispatch(requestDepot())
     return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/depot/${depotId}`, { method: 'GET' })
        .then(response => response.json())
        .then(json => dispatch(receiveDepot(json)))
@@ -170,18 +170,18 @@ function parseFiles (state, action) {
 
 function loadDepotsList () {
   return dispatch => {
-     dispatch(requestDepotsList())
-    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/depot`, { method: 'GET' })
+    dispatch(requestDepotsList())
+    return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/api/depot', { method: 'GET' })
        .then(response => response.json())
        .then(json => dispatch(receiveDepotsList(json)))
-  }/*
+  }
+}
+/*
   return dispatch => {
     dispatch(requestDepotsList())
     var json = JSON.parse(jsonDepotsList)
     return dispatch(receiveDepotsList(json))
   }*/
-}
-
 function parseDepotsList (state, action) {
   var depots = action.payload.depots
   var newDepots = []
