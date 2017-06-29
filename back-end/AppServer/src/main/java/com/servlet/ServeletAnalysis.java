@@ -1,6 +1,6 @@
 package main.java.com.servlet;
 
-import com.simpleproject.InsertIntoElasticSearch;
+import main.java.com.simpleproject.InsertIntoElasticSearch;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,7 +19,7 @@ public class ServeletAnalysis extends HttpServlet {
             throws ServletException, IOException {
         String id = req.getParameter("depot");
         InsertIntoElasticSearch.encoder(Integer.parseInt(id));
-        FileAnalysis.launchAnalysis(Integer.parseInt(id));
+        //FileAnalysis.launchAnalysis(Integer.parseInt(id));
         res.setContentType("text/plain");
         res.setCharacterEncoding( "UTF-8" );
         PrintWriter out = res.getWriter();

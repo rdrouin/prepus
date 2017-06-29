@@ -56,8 +56,8 @@ public class Similarity {
     public static String getSimilarities(String remise_id)
     {
         String returnedValue = "\"similarities\":[";
-        List<String[]> table =  PostgreContacter.call("select distinct ressemble.id, ressemble.doc_id, ressemble.pourcentage, ressemble.met_id, ressemble.text1, ressemble.text2 from iteration2.ressemble\n" +
-                "join iteration2.document on ressemble.id = document.id or ressemble.doc_id = document.id\n" +
+        List<String[]> table =  PostgreContacter.call("select distinct ressemble.doc_1, ressemble.doc_2, ressemble.pourcentage, ressemble.met_id, ressemble.text1, ressemble.text2 from iteration2.ressemble\n" +
+                "join iteration2.document on ressemble.doc_1 = document.id or ressemble.doc_2 = document.id\n" +
                 "join iteration2.remise on remise.id = document.rem_id where remise.id = " + remise_id);
         for( String[] row: table ){
             returnedValue += str(row) + ",";
