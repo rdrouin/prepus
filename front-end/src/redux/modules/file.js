@@ -1,5 +1,5 @@
 // import {fetch} from 'isomorphic-fetch'
-
+/*
 const jsonData = `{"depot":
 {"id" : "1","files" : [{"id" : "1","name" : "Document1.pdf"},
 {"id" : "2","name" : "travaux2.pdf"},{"id" : "5","name" : "belo2302.pdf"},
@@ -27,7 +27,7 @@ const jsonDepotsList = `{"depots":[
   {"id": "2","name":"Rapport final"},
   {"id": "3","name":"Rapport labo"}
 ]}`
-
+*/
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -94,12 +94,12 @@ const ACTION_HANDLERS = {
 function analyseDepot () {
   return dispatch => {
     dispatch(requestAnalysis())
-    // return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1', {method: 'POST'})
+    return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/api/analysis?depot=1', {method: 'POST'})
   }
 }
 
 function loadDepot (depotId) {
-  if (depotId === '1') {
+  /* if (depotId === '1') {
     return dispatch => {
       dispatch(requestDepot(depotId))
       var json = JSON.parse(jsonData)
@@ -111,13 +111,13 @@ function loadDepot (depotId) {
       var json = JSON.parse(jsonDataFinalBaton)
       return dispatch(receiveDepot(json))
     }
-  }
-  /* return dispatch => {
-     dispatch(requestDepot())
-     return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/depot`, { method: 'GET' })
+  } */
+  return dispatch => {
+    dispatch(requestDepot())
+    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/depot/${depotId}`, { method: 'GET' })
        .then(response => response.json())
        .then(json => dispatch(receiveDepot(json)))
-   }*/
+  }
 }
 
 function loadDepotIfNeeded () {
@@ -171,11 +171,17 @@ function parseFiles (state, action) {
 function loadDepotsList () {
   return dispatch => {
     dispatch(requestDepotsList())
-    var json = JSON.parse(jsonDepotsList)
-    return dispatch(receiveDepotsList(json))
+    return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/api/depot', { method: 'GET' })
+       .then(response => response.json())
+       .then(json => dispatch(receiveDepotsList(json)))
   }
 }
-
+/*
+  return dispatch => {
+    dispatch(requestDepotsList())
+    var json = JSON.parse(jsonDepotsList)
+    return dispatch(receiveDepotsList(json))
+  }*/
 function parseDepotsList (state, action) {
   var depots = action.payload.depots
   var newDepots = []
