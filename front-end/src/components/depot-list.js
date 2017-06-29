@@ -17,38 +17,37 @@ class DepotList extends Component {
   }
 
   render () {
-    var styles = {
-      alignment: {
-        textAlign: 'left'
-      },
-      borders: {
-        border: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        borderRadius: 5,
-        marginTop: 20
-      }
-    }
-
     return (
       this.props.activeDepot === -1
-      ? <div className="col-lg-5" style={styles.borders}>
-        <ul className="list-unstyled" style={styles.alignment}>
-          {this.props.depots.map(depot => <Depot
-            depot={depot}
-            setActiveDepot={this.props.setActiveDepot}
-            key={depot.id}
-          />)}
-        </ul>
-      </div>
-      : <FileList />
+        ? <div className="row">
+          <div className="col-lg-10 ">
+            <h3>Dépots</h3>
+            <table className="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Nom</th>
+                  <th>Nombre de fichiers</th>
+                  <th>Date de fermeture</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.props.depots.map(depot => <Depot
+                  depot={depot}
+                  setActiveDepot={this.props.setActiveDepot}
+                  key={depot.id}
+                />)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        : <FileList />
     )
   }
 }
 
 function mapStateToProps (state) {
   return {
-
     depots: state.fileReducer.depots,
     activeDepot: state.applicationReducer.activeDepot
   }

@@ -139,7 +139,7 @@ function parseFiles (state, action) {
   var response = action.payload
   var files = response.depot.files
   var similarities = response.depot.similarities
-  var id = response.depot.id
+  // var id = response.depot.id
   for (var i = 0; i < files.length; i++) {
     newState[i] = { id: files[i].id, name: files[i].name, similarities: [] }
   }
@@ -153,18 +153,18 @@ function parseFiles (state, action) {
     newState.filter(file => file.id === file2)[0].similarities.push({ id: file1, percent: percent })
   }
 
-  var depots = state.depots.map( (depot) => {
-        if(depot.id !== response.depot.id) {
-            // This isn't the item we care about - keep it as-is
-            return depot
-        }
+  var depots = state.depots.map((depot) => {
+    if (depot.id !== response.depot.id) {
+      // This isn't the item we care about - keep it as-is
+      return depot
+    }
 
-        // Otherwise, this is the one we want - return an updated value
-        return {
-            ...depot,
-            files: [...newState]
-        }
-    })
+    // Otherwise, this is the one we want - return an updated value
+    return {
+      ...depot,
+      files: [...newState]
+    }
+  })
   return { ...state, depots: depots }
 }
 

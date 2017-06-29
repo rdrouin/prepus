@@ -9,7 +9,7 @@ export default class FileList extends React.Component {
     return (
       <div>
         <div className="row">
-          <h4>Étudiants potentiellement en situation de plagiat</h4>
+          <h3>Fichiers</h3>
         </div>
         <div className="row">
           <FilesLeft />
