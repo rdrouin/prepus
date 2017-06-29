@@ -13,8 +13,8 @@ public class GetPath {
     public static String path(){
         Properties properties = new Properties();
         try {
-            System.out.println("Working Directory = " +
-                    System.getProperty("user.dir"));
+//            System.out.println("Working Directory = " +
+//                    System.getProperty("user.dir"));
             ClassLoader classLoader = InsertIntoElasticSearch.class.getClassLoader();
             FileInputStream fileStream = new FileInputStream(classLoader.getResource("config.properties").getFile());
             properties.load(fileStream);
@@ -30,8 +30,8 @@ public class GetPath {
     public static String searchConfig(){
         Properties properties = new Properties();
         try {
-            System.out.println("Working Directory = " +
-                    System.getProperty("user.dir"));
+//            System.out.println("Working Directory = " +
+//                    System.getProperty("user.dir"));
             ClassLoader classLoader = InsertIntoElasticSearch.class.getClassLoader();
             FileInputStream fileStream = new FileInputStream(classLoader.getResource("config.properties").getFile());
             properties.load(fileStream);

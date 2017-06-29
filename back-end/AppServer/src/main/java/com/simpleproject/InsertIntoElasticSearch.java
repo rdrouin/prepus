@@ -118,7 +118,7 @@ public class InsertIntoElasticSearch {
                         bob = bob.replaceAll("\\n", "").replaceAll("\\s+", " ");
                         String[] words = bob.split(" ");
                         List<String> search = new ArrayList<String>();
-                        System.out.println(words.length);
+                        //System.out.println(words.length);
                         int numberofquatuor = words.length / 10;
                         int rand = 0;
                         StringJoiner joiner = new StringJoiner(" ");
@@ -133,7 +133,7 @@ public class InsertIntoElasticSearch {
                         }
 
                         // Final
-                        System.out.println(words.length / 10);
+                        //System.out.println(words.length / 10);
                         for (int j =0; j < search.size(); j++) {
 
                             Map<String, Object> template_params = new HashMap<>();
@@ -166,9 +166,9 @@ public class InsertIntoElasticSearch {
 
                                 if(!hit.getId().equals(item)) {
                                     AddResult.insertResult(Integer.parseInt(item),Integer.parseInt(hit.getId()),2,(int)(hit.getScore()), "elastic" ,search.get(j),search.get(j) );
-                                    System.out.println(search.get(j)+ "  "+ item);
-                                    System.out.println(hit.getId());
-                                    System.out.println( hit.getScore());
+                                   // System.out.println(search.get(j)+ "  "+ item);
+                                    //System.out.println(hit.getId());
+                                   // System.out.println( hit.getScore());
                                 }
                             }
                             //JSONObject.internalResponse
@@ -176,6 +176,7 @@ public class InsertIntoElasticSearch {
                         }
                     }
                     client.close();
+                    System.out.println( "done");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -279,8 +279,8 @@ public class FileAnalysis {
                 if (!entry1.getKey().equals(entry2.getKey()))
                 if (fileSizes.get(entry1.getKey()).equals(fileSizes.get(entry2.getKey())))
                 {
-                    AddResult.insertResult(entry1.getKey(),entry2.getKey(),1,100, fileSizes.get(entry2.getKey()).toString() ,"","" );
-                    System.out.println(entry1.getKey() +"  "+ entry2.getKey()+"  "+ fileSizes.get(entry2.getKey()).toString() );
+                    //AddResult.insertResult(entry1.getKey(),entry2.getKey(),1,100, fileSizes.get(entry2.getKey()).toString() ,"","" );
+                    //System.out.println(entry1.getKey() +"  "+ entry2.getKey()+"  "+ fileSizes.get(entry2.getKey()).toString() );
                 }
             }
         }

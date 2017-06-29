@@ -21,7 +21,9 @@ public class AddResult {
             //Création d'un objet Statement
             Statement state = conn.createStatement();
             //Query d'insert
-            String query = "INSERT INTO iteration2.Ressemble (id, doc_id, met_id, pourcentage, commantaire, text1, text2) VALUES ("+doc_1+", "+doc_2+", "+methode +", "+pourcentage+", \'"+commentaire+"\', \' "+text1+" \', \' "+text2+" \')";
+            text1 = text1.replaceAll("'","''");
+            text2 = text2.replaceAll("'","''");
+            String query = "INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+doc_1+", "+doc_2+", "+methode +", "+pourcentage+", \'"+commentaire+"\', \' "+text1+" \', \' "+text2+" \')";
             state.executeUpdate(query);
             state.close();
 
