@@ -94,12 +94,12 @@ const ACTION_HANDLERS = {
 function analyseDepot () {
   return dispatch => {
     dispatch(requestAnalysis())
-    // return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/appserver/analysis?depot=1', {method: 'POST'})
+    // return fetch('http://s6ie1702.gel.usherbrooke.ca:8080/api/analysis?depot=1', {method: 'POST'})
   }
 }
 
 function loadDepot (depotId) {
-  if (depotId === '1') {
+  /* if (depotId === '1') {
     return dispatch => {
       dispatch(requestDepot(depotId))
       var json = JSON.parse(jsonData)
@@ -111,13 +111,13 @@ function loadDepot (depotId) {
       var json = JSON.parse(jsonDataFinalBaton)
       return dispatch(receiveDepot(json))
     }
-  }
-  /* return dispatch => {
+  } */
+  return dispatch => {
      dispatch(requestDepot())
-     return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/appserver/depot`, { method: 'GET' })
+    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/depot/${depotId}`, { method: 'GET' })
        .then(response => response.json())
        .then(json => dispatch(receiveDepot(json)))
-   }*/
+  }
 }
 
 function loadDepotIfNeeded () {
@@ -170,10 +170,16 @@ function parseFiles (state, action) {
 
 function loadDepotsList () {
   return dispatch => {
+     dispatch(requestDepotsList())
+    return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/depot`, { method: 'GET' })
+       .then(response => response.json())
+       .then(json => dispatch(receiveDepotsList(json)))
+  }/*
+  return dispatch => {
     dispatch(requestDepotsList())
     var json = JSON.parse(jsonDepotsList)
     return dispatch(receiveDepotsList(json))
-  }
+  }*/
 }
 
 function parseDepotsList (state, action) {
