@@ -23,7 +23,6 @@ public class PostgreContacter {
             //Création d'un objet Statement
             Statement stm = conn.createStatement();
 
-
             ResultSet rs = stm.executeQuery(query);
 
             int nCol = rs.getMetaData().getColumnCount();

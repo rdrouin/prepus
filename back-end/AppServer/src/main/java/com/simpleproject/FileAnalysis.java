@@ -1,6 +1,4 @@
-package main.java.com.simpleproject; /**
- * Created by emilearseneault on 2017-06-05.
- */
+package main.java.com.simpleproject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FileAnalysis {
-
-    private static String url = "jdbc:postgresql://s6ie1702.gel.usherbrooke.ca:5432/postgres";
-    private static String user = "administrateur";
-    private static String passwd = "s6infoe17";
 
     public static void main(String[] args)
     {
@@ -96,64 +90,24 @@ public class FileAnalysis {
 
     public static HashMap<Integer,String> getFileList(int remiseID) {
 
-        HashMap<Integer,String> filePathList = new HashMap<Integer,String>();
+        HashMap<Integer,String> filePathList = new HashMap<>();
+        //Query d'insert
+        String remiseQuery = "SELECT id, location, nom from itération1.document WHERE rem_id = " + remiseID + ";";
+        String noremiseQuery = "SELECT id, location, nom from itération1.document;";
+        String query;
 
-        try {
-            Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(url, user, passwd);
-
-            //Création d'un objet Statement
-            Statement state = conn.createStatement();
-
-            //Query d'insert
-            String remiseQuery = "SELECT id, location, nom from itération1.document WHERE rem_id = " + remiseID + ";";
-            String noremiseQuery = "SELECT id, location, nom from itération1.document;";
-            String query = null;
-
-            if (remiseID == 0) {
-                query = noremiseQuery;
-            }
-            else {
-                query = remiseQuery;
-            }
-
-            ResultSet result = state.executeQuery(query);
-
-            // Get path and name columnid to concatenate
-            ResultSetMetaData resultMeta = result.getMetaData();
-            int pathID = 0;
-            int nameID = 0;
-            int ID =0;
-
-            for(int i = 1; i <= resultMeta.getColumnCount();i++) {
-                if (resultMeta.getColumnLabel(i).equals("location")){
-                    pathID = i;
-                }
-                if (resultMeta.getColumnLabel(i).equals("nom")){
-                    nameID = i;
-                }
-                if (resultMeta.getColumnLabel(i).equals("id")){
-                    ID = i;
-                }
-
-            }
-
-            // Concatenate path and filename to return
-            String filePath = null;
-            String fileName = null;
-            while(result.next()) {
-                    filePath = result.getObject(pathID).toString();
-                    fileName = result.getObject(nameID).toString();
-                    filePathList.put(Integer.parseInt(result.getObject(ID).toString()),filePath + fileName);
-
-            }
-
-            result.close();
-            state.close();
+        if (remiseID == 0) {
+            query = noremiseQuery;
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        else {
+            query = remiseQuery;
         }
+        List<String[]> result = PostgreContacter.call(query);
+
+        for( String[] row: result ){
+            filePathList.put(Integer.parseInt(row[0]),new File(row[1], row[2]).getPath());
+        }
+
         return filePathList;
     }
 

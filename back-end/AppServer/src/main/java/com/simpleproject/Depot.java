@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Raph on 2017-06-27.
- */
 public class Depot {
     String id;
     String name;
