@@ -69,6 +69,7 @@ function mapStateToProps (state) {
   return {
     files: currentFiles,
     activeFileLeft: state.applicationReducer.activeFileLeft,
+    activeDepot: state.applicationReducer.activeDepot,
     similarities: state.settingsReducer.similarities
   }
 }

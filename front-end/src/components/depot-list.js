@@ -13,54 +13,49 @@ class DepotList extends Component {
 
   constructor (props) {
     super(props)
-    this.loadDepotList = this.loadDepotList.bind(this)
-    this.props.loadDepotList()
-  }
-
-  loadDepotList () {
-    this.props.loadDepotList()
+    this.props.loadDepotsList()
   }
 
   render () {
-    var styles = {
-      alignment: {
-        textAlign: 'left'
-      },
-      borders: {
-        border: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        borderRadius: 5,
-        marginTop: 20
-      }
-    }
-
     return (
       this.props.activeDepot === -1
-      ? <div className="col-lg-5" style={styles.borders}>
-        <ul className="list-unstyled" style={styles.alignment}>
-          {this.props.depotsList.map(depot => <Depot
-            depot={depot}
-            setActiveDepot={this.props.setActiveDepot}
-            key={depot.id}
-          />)}
-        </ul>
-      </div>
-      : <FileList />
+        ? <div className="row">
+          <div className="col-lg-10 ">
+            <h3>Dépots</h3>
+            <table className="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Nom</th>
+                  <th>Nombre de fichiers</th>
+                  <th>Date de fermeture</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.props.depots.map(depot => <Depot
+                  depot={depot}
+                  setActiveDepot={this.props.setActiveDepot}
+                  key={depot.id}
+                />)}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        : <FileList />
     )
   }
 }
 
 function mapStateToProps (state) {
   return {
-    depotsList: state.fileReducer.depotsList,
+    depots: state.fileReducer.depots,
     activeDepot: state.applicationReducer.activeDepot
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    loadDepotList: FileActions.loadDepotList,
+    loadDepotsList: FileActions.loadDepotsList,
     setActiveDepot: ApplicationActions.setActiveDepot
   }, dispatch)
 }

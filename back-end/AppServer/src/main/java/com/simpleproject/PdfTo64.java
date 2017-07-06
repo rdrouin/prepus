@@ -1,4 +1,4 @@
-package com.simpleproject;
+package main.java.com.simpleproject;
 
 import java.io.File;
 import java.io.IOException;

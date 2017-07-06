@@ -30,7 +30,6 @@ class FilesRight extends Component {
       // filter removes duplicates
       let rightFilesIds = leftFileSimilarities.map(file => file.id)
       rightFilesIds = rightFilesIds.filter((file, pos) => (rightFilesIds.indexOf(file) === pos))
-
       if (leftFileSimilarities.length === 0) {
         return (
           <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
@@ -66,7 +65,6 @@ class FilesRight extends Component {
     }
     return (<div></div>)
   }
-
 }
 function mapStateToProps (state) {
   var currentDepot = state.fileReducer.depots.filter(depot => depot.id === state.applicationReducer.activeDepot)[0]

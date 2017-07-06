@@ -13,9 +13,13 @@ export default class Depot extends Component {
 
   render () {
     return (
-      <div>
-        <li onClick={this.setActiveDepot}> Depot {this.props.depot.id}</li>
-      </div>
+      <tr>
+        <td onClick={this.setActiveDepot}><a href="#">{this.props.depot.id}</a></td>
+        <td onClick={this.setActiveDepot}><a href="#">{this.props.depot.name}</a></td>
+        <td>6</td>
+        <td>02/08/2016</td>
+      </tr>
+
     )
   }
 }
