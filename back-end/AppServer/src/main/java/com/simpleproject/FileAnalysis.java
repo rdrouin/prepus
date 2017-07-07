@@ -1,5 +1,7 @@
 package main.java.com.simpleproject;
 
+import main.java.com.requester.PostgreRequester;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -8,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,7 @@ public class FileAnalysis {
         else {
             query = remiseQuery;
         }
-        List<String[]> result = PostgreContacter.call(query);
+        List<String[]> result = PostgreRequester.call(query);
 
         for( String[] row: result ){
             filePathList.put(Integer.parseInt(row[0]),new File(row[1], row[2]).getPath());

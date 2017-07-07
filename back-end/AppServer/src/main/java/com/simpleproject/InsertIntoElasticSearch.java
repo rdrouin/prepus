@@ -1,29 +1,21 @@
 package main.java.com.simpleproject;
+import main.java.com.requester.PostgreRequester;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.script.mustache.SearchTemplateRequestBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.nio.file.Files;
-import java.sql.*;
 import java.util.*;
 
 public class InsertIntoElasticSearch {
@@ -31,7 +23,7 @@ public class InsertIntoElasticSearch {
     public static void encoder(int depot) {
         String travailFromRemiseQuery = "SELECT tra_id from iteration2.remise WHERE id = " + depot + ";";
         String insertQuery;
-        List<String[]> result = PostgreContacter.call(travailFromRemiseQuery);
+        List<String[]> result = PostgreRequester.call(travailFromRemiseQuery);
         String travail_id = "0";
         for( String[] row: result ){
             travail_id = row[0];
@@ -42,7 +34,7 @@ public class InsertIntoElasticSearch {
         } else {
             insertQuery = "SELECT id, location, nom from iteration2.document WHERE rem_id = " + depot + ";";
         }
-        result = PostgreContacter.call(insertQuery);
+        result = PostgreRequester.call(insertQuery);
 
         // Concatenate path and filename to return
         try {
