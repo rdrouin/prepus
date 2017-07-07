@@ -1,15 +1,12 @@
-package main.java.com.simpleproject;
+package main.java.com.requester;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by Raph on 2017-06-27.
- */
 // TODO drouinr 2017-06-27 Singleton moi ca
-public class PostgreContacter {
+public class PostgreRequester {
     private static String url = "jdbc:postgresql://s6ie1702.gel.usherbrooke.ca:5432/postgres";
     private static String user = "administrateur";
     private static String passwd = "s6infoe17";
@@ -22,7 +19,6 @@ public class PostgreContacter {
 
             //Création d'un objet Statement
             Statement stm = conn.createStatement();
-
 
             ResultSet rs = stm.executeQuery(query);
 
