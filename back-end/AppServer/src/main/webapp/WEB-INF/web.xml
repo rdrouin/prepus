@@ -31,6 +31,17 @@
         <servlet-name>Files</servlet-name>
         <url-pattern>/files/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>google</servlet-name>
+        <servlet-class>main.java.com.servlet.ServletGoogleTest</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>google</servlet-name>
+        <url-pattern>/google/*</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>Analysis</servlet-name>
         <servlet-class>main.java.com.servlet.ServeletAnalysis</servlet-class>
