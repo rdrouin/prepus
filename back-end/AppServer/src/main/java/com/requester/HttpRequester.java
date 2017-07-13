@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequester {
@@ -23,15 +24,14 @@ public class HttpRequester {
 
     public String executeGet(String targetURL)
     {
-        return executeGet(targetURL, "");
+        return executeGet(targetURL, new HashMap<String, String>(), "");
     }
 
-    public String executeGet(String targetURL, Map<String, String> urlParameters) {
-        return executeGet(targetURL, createParameterString(urlParameters));
+    public String executeGet(String targetURL, Map<String, String> header) {
+        return executeGet(targetURL, header);
     }
 
-    public String executeGet(String targetURL, String urlParameters) {
-        targetURL += "?" + urlParameters;
+    public String executeGet(String targetURL, Map<String, String> header, String body) {
         HttpURLConnection connection = null;
 
         try {
@@ -39,6 +39,14 @@ public class HttpRequester {
             URL url = new URL(targetURL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
+
+            connection.setRequestProperty("Content-Type",
+                    "text/json");
+
+            DataOutputStream wr = new DataOutputStream (
+                    connection.getOutputStream());
+            wr.writeBytes(body);
+            wr.close();
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
@@ -61,28 +69,19 @@ public class HttpRequester {
         }
     }
 
-    public String executePost(String targetURL) {
-        return executePost(targetURL, "");
-    }
-
-    public String executePost(String targetURL, Map<String, String> urlParameters) {
-        System.out.println(urlParameters.toString());
-        return executePost(targetURL, createParameterString(urlParameters));
-    }
-
-    public String executePost(String targetURL, String urlParameters) {
+    public String executePost(String targetURL, String urlParameters, String body) {
         HttpURLConnection connection = null;
 
         try {
             //Create connection
             URL url = new URL(targetURL);
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("PUT");
             connection.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
 
             connection.setRequestProperty("Content-Length",
-                    Integer.toString(urlParameters.getBytes().length));
+                    Integer.toString(body.getBytes().length));
             connection.setRequestProperty("Content-Language", "en-US");
 
             connection.setUseCaches(false);

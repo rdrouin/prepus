@@ -1,10 +1,17 @@
 package main.java.com.simpleproject;
+import main.java.com.requester.ElasticRequester;
+import main.java.com.requester.HttpRequester;
 import main.java.com.requester.PostgreRequester;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.script.ScriptType;
@@ -39,34 +46,29 @@ public class InsertIntoElasticSearch {
         // Concatenate path and filename to return
         try {
             //connecting to ElasticSearch
-            TransportClient client = new PreBuiltTransportClient(org.elasticsearch.common.settings.Settings.EMPTY)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+            RestClient requester = ElasticRequester.getInstance();
 
-            try {
-                CreateIndexResponse response1 = client.admin().indices().prepareCreate(travail_id)
 
-                        .addMapping(Integer.toString(depot), "{ \"" + Integer.toString(depot) + "\": { \"properties\": { \"attachment\": { \"properties\": { \"content\": { \"type\": \"text\", \"fields\": { \"keyword\": { \"type\": \"keyword\" }, \"stemmed\": { \"type\": \"text\", \"analyzer\": \"french\" } } }, \"content_length\": { \"type\": \"long\" }, \"content_type\": { \"type\": \"text\", \"fields\": { \"keyword\": { \"type\": \"keyword\" } } }, \"language\": { \"type\": \"text\", \"fields\": { \"keyword\": { \"type\": \"keyword\" } } } } } } } }")
-                        .get();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            //HttpRequester requester = new HttpRequester();
+
             List<String> l_id = new ArrayList<>();
+            ProjectProperties prop = ProjectProperties.getInstance();
             for( String[] row: result ){
                 //push files in elasticSearch
-                String path = GetPath.path() + row[1] + row[2];
+                String path = prop.getProperty("document.path")+ row[1] + row[2];
                 if (new File(path).exists()) {
-                    String json = "{" +
-                            "\"data\":\"" + PdfTo64.encoder(GetPath.path() + row[1] + row[2]) + "\"" +
-                            "}";
+                    HttpEntity body = new NStringEntity("{" +
+                            "\"data\":\"" + PdfTo64.encoder(prop.getProperty("document.path") + row[1] + row[2]) + "\"" +
+                            "}");
                     l_id.add(row[0]);
-                    IndexResponse response = client.prepareIndex(travail_id, Integer.toString(depot), row[0])
-                            .setSource(json).setPipeline("attachment").execute()
-                            .actionGet();
-
+                    //requester.executePost("http://s6ie1702.gel.usherbrooke.ca:9300" + "/"+travail_id+"/"+depot+"/"+row[0], "", body);
+                    requester.performRequest("PUT","/"+travail_id+"/"+depot+"/"+row[0], Collections.<String,String>emptyMap(), body);
                 }
             }
 
-            for (Iterator<String> i = l_id.iterator(); i.hasNext(); ) {
+            requester.close();
+
+           /* for (Iterator<String> i = l_id.iterator(); i.hasNext(); ) {
                 String item = i.next();
                 GetResponse response = client.prepareGet(travail_id, Integer.toString(depot), item).get();
                 String test = String.valueOf(response.getSourceAsString());
@@ -132,7 +134,7 @@ public class InsertIntoElasticSearch {
                     //JSONObject.internalResponse
                     //System.out.println(res.internalResponse);
                 }
-            }
+            }*/
         }
         catch (Exception e) {
             e.printStackTrace();
