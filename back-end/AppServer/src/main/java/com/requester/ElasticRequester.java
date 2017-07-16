@@ -10,9 +10,11 @@ public class ElasticRequester{
 
     public static RestClient getInstance() {
         ProjectProperties properties = ProjectProperties.getInstance();
-        if (requester == null)
+        if (requester == null) {
+            Integer bob = Integer.parseInt(properties.getProperty("elastic.port"));
             requester = RestClient.builder(
                     new HttpHost(properties.getProperty("elastic.url"), Integer.parseInt(properties.getProperty("elastic.port")))).build();
+        }
         return requester;
     }
 }
