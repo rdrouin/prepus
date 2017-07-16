@@ -1,24 +1,20 @@
 package main.java.com.requester;
 
-public class ElasticRequester extends HttpRequester {
-    private static ElasticRequester requester;
-    private String url;
+import main.java.com.simpleproject.ProjectProperties;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
 
 
-    public static ElasticRequester getInstance(){
-        if (requester == null)
-            requester = new ElasticRequester();
+public class ElasticRequester{
+    private static RestClient requester;
+
+    public static RestClient getInstance() {
+        ProjectProperties properties = ProjectProperties.getInstance();
+        if (requester == null) {
+            Integer bob = Integer.parseInt(properties.getProperty("elastic.port"));
+            requester = RestClient.builder(
+                    new HttpHost(properties.getProperty("elastic.url"), Integer.parseInt(properties.getProperty("elastic.port")))).build();
+        }
         return requester;
-    }
-
-    private ElasticRequester(){
-        super();
-        url = "http://s6ie1702.gel.usherbrooke.ca:5601/";
-    }
-
-    // TODO drouinr Composer la nature d'un message vers elastic search
-    public String executeGet()
-    {
-        return super.executeGet(url);
     }
 }

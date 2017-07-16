@@ -1,10 +1,19 @@
 package main.java.com.simpleproject;
+import main.java.com.requester.ElasticRequester;
+import main.java.com.requester.HttpRequester;
 import main.java.com.requester.PostgreRequester;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.script.ScriptType;
@@ -15,12 +24,167 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 
 public class InsertIntoElasticSearch {
 
+    public static boolean createPipeline(){
+        RestClient requester = ElasticRequester.getInstance();
+
+        HttpEntity body = new NStringEntity("{ \"description\" : \"Extract attachment information\", \n" +
+                "  \"processors\": [\n" +
+                "    {\n" +
+                "      \"attachment\": {\n" +
+                "        \"field\": \"data\",\n" +
+                "        \"indexed_chars\": -1\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ] \n" +
+                "}\n",ContentType.APPLICATION_JSON);
+        try {
+            requester.performRequest("PUT","_ingest/pipeline/attachment", Collections.<String,String>emptyMap(), body);
+        } catch (IOException e) {
+            //e.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean createMapping(String id){
+        RestClient requester = ElasticRequester.getInstance();
+
+        HttpEntity body = new NStringEntity("{\n" +
+                "  \"mappings\": {\n" +
+                "    \"document\" : {\n" +
+                "      \"properties\" : {\n" +
+                "        \"attachment\": {\n" +
+                "          \"properties\": {\n" +
+                "            \"content\": {\n" +
+                "              \"type\": \"text\",\n" +
+                "              \"fields\": {\n" +
+                "                \"keyword\": {\n" +
+                "                  \"type\": \"keyword\"\n" +
+                "                },\n" +
+                "                \"stemmed\": {\n" +
+                "                  \"type\": \"text\",\n" +
+                "                  \"analyzer\": \"french\"\n" +
+                "                },\n" +
+                "                \"bigrammes\": {\n" +
+                "                  \"type\": \"text\",\n" +
+                "                  \"analyzer\": \"bigrammes\"\n" +
+                "                },\n" +
+                "                \"trigrammes\": {\n" +
+                "                  \"type\": \"text\",\n" +
+                "                  \"analyzer\": \"trigrammes\"\n" +
+                "                }\n" +
+                "              }\n" +
+                "            },\n" +
+                "            \"content_length\": {\n" +
+                "              \"type\": \"long\"\n" +
+                "            },\n" +
+                "            \"content_type\": {\n" +
+                "              \"type\": \"text\",\n" +
+                "              \"fields\": {\n" +
+                "                \"keyword\": {\n" +
+                "                  \"type\": \"keyword\"\n" +
+                "                }\n" +
+                "              }\n" +
+                "            },\n" +
+                "            \"language\": {\n" +
+                "              \"type\": \"text\",\n" +
+                "              \"fields\": {\n" +
+                "                \"keyword\": {\n" +
+                "                  \"type\": \"keyword\"\n" +
+                "                }\n" +
+                "              }\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"settings\": {\n" +
+                "    \"analysis\": {\n" +
+                "      \"analyzer\": {\n" +
+                "        \"bigrammes\": {\n" +
+                "          \"type\": \"custom\",\n" +
+                "          \"tokenizer\": \"standard\",\n" +
+                "          \"char_filter\": [\n" +
+                "            \"html_strip\"\n" +
+                "            ],\n" +
+                "            \"filter\" : [\n" +
+                "              \"lowercase\",\n" +
+                "              \"bigrammes_filter\"\n" +
+                "              ]\n" +
+                "        },\n" +
+                "        \"trigrammes\" : {\n" +
+                "          \"type\": \"custom\",\n" +
+                "          \"tokenizer\": \"standard\",\n" +
+                "          \"char_filter\": [\n" +
+                "            \"html_strip\"\n" +
+                "            ],\n" +
+                "            \"filter\" : [\n" +
+                "              \"lowercase\",\n" +
+                "              \"trigrammes_filter\"\n" +
+                "              ]\n" +
+                "        }\n" +
+                "      },\n" +
+                "      \"filter\": {\n" +
+                "        \"bigrammes_filter\": {\n" +
+                "          \"type\" : \"shingle\",\n" +
+                "          \"max_shingle_size\" : 2,\n" +
+                "          \"min_shingle_size\" : 2,\n" +
+                "          \"output_unigrams\" : false,\n" +
+                "          \"output_unigrams_if_no_shingles\" : true\n" +
+                "        },\n" +
+                "        \"trigrammes_filter\": {\n" +
+                "          \"type\" : \"shingle\",\n" +
+                "          \"max_shingle_size\" : 3,\n" +
+                "          \"min_shingle_size\" : 3,\n" +
+                "          \"output_unigrams\" : false,\n" +
+                "          \"output_unigrams_if_no_shingles\" : true\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}\n",ContentType.APPLICATION_JSON);
+        try {
+            requester.performRequest("PUT",id, Collections.<String,String>emptyMap(), body);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    public static void analyseMeta(String travail, String depot){
+        RestClient requester = ElasticRequester.getInstance();
+        ProjectProperties properties = ProjectProperties.getInstance();
+
+        Map<String, String> paramMap = new HashMap<String, String>();
+        paramMap.put("q", "*:*");
+        paramMap.put("pretty", "true");
+
+        HttpEntity body = new NStringEntity("{" +
+                "\"_source\":[\"attachment.author\",\"attachment.content\"],\n" +
+                "\"query\": {\n" +
+                "\"match_all\": {" +
+                "}\n" +
+                "}" +
+                "}",ContentType.APPLICATION_JSON);
+        try{
+            //get all author
+            Response indexResponse = requester.performRequest("GET","/"+travail+"/"+depot+"/_search", Collections.<String,String>emptyMap(), body);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void encoder(int depot) {
+        createPipeline();
         String travailFromRemiseQuery = "SELECT tra_id from iteration2.remise WHERE id = " + depot + ";";
         String insertQuery;
         List<String[]> result = PostgreRequester.call(travailFromRemiseQuery);
@@ -28,6 +192,7 @@ public class InsertIntoElasticSearch {
         for( String[] row: result ){
             travail_id = row[0];
         }
+        createMapping(travail_id);
 
         if (depot == 0) {
             insertQuery = "SELECT id, location, nom from iteration2.document;";
@@ -39,34 +204,33 @@ public class InsertIntoElasticSearch {
         // Concatenate path and filename to return
         try {
             //connecting to ElasticSearch
-            TransportClient client = new PreBuiltTransportClient(org.elasticsearch.common.settings.Settings.EMPTY)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 
-            try {
-                CreateIndexResponse response1 = client.admin().indices().prepareCreate(travail_id)
+            RestClient requester = ElasticRequester.getInstance();
+            ProjectProperties properties = ProjectProperties.getInstance();
+            //HttpRequester requester = new HttpRequester();
 
-                        .addMapping(Integer.toString(depot), "{ \"" + Integer.toString(depot) + "\": { \"properties\": { \"attachment\": { \"properties\": { \"content\": { \"type\": \"text\", \"fields\": { \"keyword\": { \"type\": \"keyword\" }, \"stemmed\": { \"type\": \"text\", \"analyzer\": \"french\" } } }, \"content_length\": { \"type\": \"long\" }, \"content_type\": { \"type\": \"text\", \"fields\": { \"keyword\": { \"type\": \"keyword\" } } }, \"language\": { \"type\": \"text\", \"fields\": { \"keyword\": { \"type\": \"keyword\" } } } } } } } }")
-                        .get();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
             List<String> l_id = new ArrayList<>();
             for( String[] row: result ){
                 //push files in elasticSearch
-                String path = GetPath.path() + row[1] + row[2];
+                String path = properties.getProperty("document.path")+ row[1] + row[2];
                 if (new File(path).exists()) {
-                    String json = "{" +
-                            "\"data\":\"" + PdfTo64.encoder(GetPath.path() + row[1] + row[2]) + "\"" +
-                            "}";
+                    HttpEntity body = new NStringEntity("{" +
+                            "\"data\":\"" + PdfTo64.encoder(properties.getProperty("document.path") + row[1] + row[2]) + "\"" +
+                            "}",ContentType.APPLICATION_JSON);
                     l_id.add(row[0]);
-                    IndexResponse response = client.prepareIndex(travail_id, Integer.toString(depot), row[0])
-                            .setSource(json).setPipeline("attachment").execute()
-                            .actionGet();
+                    //requester.executePost("http://s6ie1702.gel.usherbrooke.ca:9300" + "/"+travail_id+"/"+depot+"/"+row[0], "", body);
+                    HashMap<String,String> param = new HashMap<String,String>();
+                    param.put("pipeline", "attachment");
 
+                    requester.performRequest("PUT","/"+travail_id+"/"+depot+"/"+row[0],param, body);
                 }
             }
 
-            for (Iterator<String> i = l_id.iterator(); i.hasNext(); ) {
+
+            //requester.close();
+            analyseMeta(travail_id,travail_id);
+
+           /* for (Iterator<String> i = l_id.iterator(); i.hasNext(); ) {
                 String item = i.next();
                 GetResponse response = client.prepareGet(travail_id, Integer.toString(depot), item).get();
                 String test = String.valueOf(response.getSourceAsString());
@@ -132,7 +296,7 @@ public class InsertIntoElasticSearch {
                     //JSONObject.internalResponse
                     //System.out.println(res.internalResponse);
                 }
-            }
+            }*/
         }
         catch (Exception e) {
             e.printStackTrace();
