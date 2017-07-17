@@ -42,7 +42,7 @@ public class HttpRequester {
 
             connection.setRequestProperty("Content-Type",
                     "text/json");
-
+            connection.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream (
                     connection.getOutputStream());
             wr.writeBytes(body);
@@ -76,7 +76,7 @@ public class HttpRequester {
             //Create connection
             URL url = new URL(targetURL);
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("PUT");
+            connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
 
