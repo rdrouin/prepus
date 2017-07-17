@@ -1,13 +1,9 @@
 package main.java.com.simpleproject;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import main.java.com.requester.PostgreRequester;
+
 import java.util.List;
 
-/**
- * Created by Raph on 2017-06-27.
- */
 public class Depot {
     String id;
     String name;
@@ -15,6 +11,9 @@ public class Depot {
 
     public static String str(String id, String name) {
         return "{\"id\": \"" + id + "\",\"name\":\"" + name + "\"}";
+    }
+    public static String str(String id,String date, String done, String count, String name) {
+        return "{\"id\": \"" + id + "\",\"date\": \"" + date + "\",\"analyze\": \"" + done + "\",\"count\": \"" + count + "\",\"name\":\"" + name + "\"}";
     }
 
     public static String sim(String[] list)
@@ -24,11 +23,11 @@ public class Depot {
 
     public static String GetAllDepot(){
         // Replace with database call
-        List<String[]> table =  PostgreContacter.call("select remise.id, travail.nom from iteration2.remise join iteration2.travail on remise.tra_id = travail.id");
+        List<String[]> table =  PostgreRequester.call("select remise.id, remise.date, remise.analysefaite,(SELECT COUNT(*) AS Count from iteration2.document where remise.id = document.rem_id), travail.nom from iteration2.remise join iteration2.travail on remise.tra_id = travail.id");
 
         String returnedValue = "{\"depots\":[";
         for( String[] row: table ){
-            returnedValue += str(row[0], row[1]) + ",";
+            returnedValue += str(row[0], row[1], row[2], row[3], row[4]) + ",";
         }
         returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
         returnedValue += "]}";
@@ -37,7 +36,7 @@ public class Depot {
 
     public static String GetOneDepotFilesSimilarities(int id)
     {
-        List<String[]> table =  PostgreContacter.call("select document.id, document.nom from iteration2.document join iteration2.remise on remise.id = document.rem_id where remise.id = " + Integer.toString(id));
+        List<String[]> table =  PostgreRequester.call("select document.id, document.nom from iteration2.document join iteration2.remise on remise.id = document.rem_id where remise.id = " + Integer.toString(id));
 
         String returnedValue = "{\"depot\":{\"id\":\"" + Integer.toString(id) + "\", \"files\":[";
         for( String[] row: table ){
