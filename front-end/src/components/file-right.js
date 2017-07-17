@@ -8,6 +8,7 @@ import FileExpanded from './file-expanded'
 import File from './file'
 
 class FilesRight extends Component {
+
   render () {
     var styles = {
       alignment: {

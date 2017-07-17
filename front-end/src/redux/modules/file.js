@@ -83,9 +83,9 @@ export const FileActions = {
   loadDepotsList
 }
 
-// ------------------------------------
+// -----------------------------------
 // Action Handlers
-// ------------------------------------
+// -----------------------------------
 const ACTION_HANDLERS = {
   [REQUEST_DEPOT]: (state, action) => ({ ...state }),
   [REQUEST_ANALYSIS]: (state, action) => ({ ...state }),

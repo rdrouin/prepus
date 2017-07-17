@@ -10,7 +10,6 @@ export const REMOVE_ACTIVE_FILE_LEFT = 'REMOVE_ACTIVE_FILE_LEFT'
 export const REMOVE_ACTIVE_FILE_RIGHT = 'REMOVE_ACTIVE_FILE_RIGHT'
 export const REMOVE_ACTIVE_FILES = 'REMOVE_ACTIVE_FILES'
 export const SHOW_SETTINGS = 'SHOW_SETTINGS'
-export const HIDE_SETTINGS = 'SHOW_SETTINGS'
 
 // ------------------------------------
 // Actions
