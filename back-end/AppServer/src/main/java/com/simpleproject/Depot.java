@@ -12,7 +12,7 @@ public class Depot {
     public static String str(String id, String name) {
         return "{\"id\": \"" + id + "\",\"name\":\"" + name + "\"}";
     }
-    public static String str(String id,String date,String done,String count, String name) {
+    public static String str(String id,String date, String done, String count, String name) {
         return "{\"id\": \"" + id + "\",\"date\": \"" + date + "\",\"analyze\": \"" + done + "\",\"count\": \"" + count + "\",\"name\":\"" + name + "\"}";
     }
 
@@ -27,7 +27,7 @@ public class Depot {
 
         String returnedValue = "{\"depots\":[";
         for( String[] row: table ){
-            returnedValue += str(row[0], row[1],row[2],row[3],row[4]) + ",";
+            returnedValue += str(row[0], row[1], row[2], row[3], row[4]) + ",";
         }
         returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
         returnedValue += "]}";
