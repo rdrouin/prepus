@@ -18,7 +18,7 @@ class ControlPanel extends Component {
   }
 
   analyseDepot () {
-    this.props.analyseDepot()
+    this.props.analyseDepot(this.props.metadata,this.props.similarity,this.props.research)
   }
 
   removeActiveDepot () {
@@ -40,7 +40,10 @@ class ControlPanel extends Component {
 function mapStateTopProps (state) {
   return {
     activeFileLeft: state.applicationReducer.activeFileLeft,
-    similarities: state.settingsReducer.similarities
+    similarities: state.settingsReducer.similarities,
+    similarity: state.settingsReducer.similarity,
+    research: state.settingsReducer.research,
+    metadata: state.settingsReducer.metadata
   }
 }
 
