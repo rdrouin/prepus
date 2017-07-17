@@ -34,6 +34,7 @@ public class PostgreRequester {
             }
 
             stm.close();
+            conn.close();
             return table;
         }
         catch (Exception e) {
