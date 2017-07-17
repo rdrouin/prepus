@@ -1,5 +1,7 @@
 package main.java.com.simpleproject;
 
+import main.java.com.requester.PostgreRequester;
+
 import java.util.List;
 
 /**
@@ -47,16 +49,17 @@ public class Similarity {
         return "{\"file1\":\"" + list[0] +
                 "\",\"file2\":\"" + list[1] +
                 "\",\"percent\":\"" + list[2] +
-                "\",\"type\":\"" + list[3] +
-                "\",\"text1\":\"" + list[4] +
-                "\",\"text2\":\"" + list[5] +
+                "\",\"commentaire\":\"" + list[3] +
+                "\",\"type\":\"" + list[4] +
+                "\",\"text1\":\"" + list[5] +
+                "\",\"text2\":\"" + list[6] +
                 "\"}";
     }
 
     public static String getSimilarities(String remise_id)
     {
         String returnedValue = "\"similarities\":[";
-        List<String[]> table =  PostgreContacter.call("select distinct ressemble.doc_1, ressemble.doc_2, ressemble.pourcentage, ressemble.met_id, ressemble.text1, ressemble.text2 from iteration2.ressemble\n" +
+        List<String[]> table =  PostgreRequester.call("select distinct ressemble.doc_1, ressemble.doc_2, ressemble.pourcentage, ressemble.commantaire, ressemble.met_id, ressemble.text1, ressemble.text2 from iteration2.ressemble\n" +
                 "join iteration2.document on ressemble.doc_1 = document.id or ressemble.doc_2 = document.id\n" +
                 "join iteration2.remise on remise.id = document.rem_id where remise.id = " + remise_id);
         for( String[] row: table ){
