@@ -43,7 +43,6 @@ export const REQUEST_ANALYSIS = 'REQUEST_ANALYSIS'
 // ------------------------------------
 // Actions
 // ------------------------------------
-  
 
 function requestDepot (depotId) {
   return {
@@ -94,7 +93,7 @@ const ACTION_HANDLERS = {
   [RECEIVE_DEPOTS_LIST]: (state, action) => parseDepotsList(state, action)
 }
 
-function analyseDepot (metadata,similarityPercentage,researchPercentage) {
+function analyseDepot (metadata, similarityPercentage, researchPercentage) {
   return dispatch => {
     dispatch(requestAnalysis())
     return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/analysis?depot=1&metadata=${metadata}&similarityPercentage=${similarityPercentage}&researchPercentage=${researchPercentage}`, {method: 'POST'})
@@ -153,8 +152,8 @@ function parseFiles (state, action) {
     var text2 = similarities[i].text2
     var percent = similarities[i].percent
 
-    newState.filter(file => file.id === file1)[0].similarities.push({ id: file2, percent: percent, text: text1})
-    newState.filter(file => file.id === file2)[0].similarities.push({ id: file1, percent: percent, text: text2})
+    newState.filter(file => file.id === file1)[0].similarities.push({ id: file2, percent: percent, text: text1 })
+    newState.filter(file => file.id === file2)[0].similarities.push({ id: file1, percent: percent, text: text2 })
   }
 
   var depots = state.depots.map((depot) => {
@@ -190,7 +189,13 @@ function parseDepotsList (state, action) {
   var depots = action.payload.depots
   var newDepots = []
   for (var i = 0; i < depots.length; i++) {
-    newDepots.push({id: depots[i].id, name: depots[i].name, date: depots[i].date, count: depots[i].count, analyze: depots[i].analyze})
+    newDepots.push({
+      id: depots[i].id,
+      name: depots[i].name,
+      date: depots[i].date,
+      count: depots[i].count,
+      analyze: depots[i].analyze
+    })
   }
   return {...state, depots: [...state.depots, ...newDepots]}
 }

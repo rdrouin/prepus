@@ -29,7 +29,7 @@ class DepotList extends Component {
                   <th>Name</th>
                   <th>File Count</th>
                   <th>Date</th>
-                  <th>Analyzed</th>   
+                  <th>Analyzed</th>
                 </tr>
               </thead>
               <tbody>

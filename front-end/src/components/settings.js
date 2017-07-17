@@ -13,28 +13,32 @@ class Settings extends Component {
     this.showMetadata = this.showMetadata.bind(this)
     this.similaritiesPercentage = this.similaritiesPercentage.bind(this)
     this.researchPercentage = this.researchPercentage.bind(this)
-    
-
   }
+
   showSimilaritiesOnly () {
     this.props.showSimilaritiesOnly()
   }
+
   showSettings () {
     this.props.showSettings()
   }
+
   showMetadata () {
     this.props.showMetadata()
   }
+
   similaritiesPercentage () {
-    var input = document.getElementById("SimilarityPercentage")
+    var input = document.getElementById('SimilarityPercentage')
     this.props.similaritiesPercentage(input.value)
   }
+
   researchPercentage () {
-    var input = document.getElementById("ResearchPercentage")
+    var input = document.getElementById('ResearchPercentage')
     this.props.researchPercentage(input.value)
   }
+
   render () {
-      var styles = {
+    var styles = {
       alignment: {
         textAlign: 'left'
       },
@@ -54,18 +58,31 @@ class Settings extends Component {
           <button onClick={this.props.showSettings} style={{ float: 'right' }}>X</button>
           <div className="col-lg-6" style={styles.borders}>
             <ul className="list-unstyled" style={styles.alignment}>
-             <li> <input type="checkbox" name="showSimilaritiesOnly"
-                onClick={this.showSimilaritiesOnly}
-                defaultChecked={this.props.similarities ? 'checked' : ''} />
-              <span>Show Similarities Only</span></li>
-              <li> <input type="checkbox" name="ShowMetadata"  onClick={this.showMetadata}
-                defaultChecked={this.props.metadata ? 'checked' : ''}/>
-              <span>Show Metadata</span></li>
-            <li> Similarity Percentage:  <input type="number" id="SimilarityPercentage"  min="0" max="100" value={this.props.similarity} onChange={this.similaritiesPercentage}/></li>
-            <li>
-            Research Percentage: <input type="number" id="ResearchPercentage" min="1" max="100" value={this.props.research} onChange={this.researchPercentage}/>
-            
-            </li>
+              <li>
+                <input type="checkbox" name="showSimilaritiesOnly"
+                  onClick={this.showSimilaritiesOnly}
+                  defaultChecked={this.props.similarities ? 'checked' : ''} />
+                <span>Show Similarities Only</span>
+              </li>
+              <li>
+                <input type="checkbox" name="ShowMetadata" onClick={this.showMetadata}
+                  defaultChecked={this.props.metadata ? 'checked' : ''} />
+                <span>Show Metadata</span>
+              </li>
+              <li>
+                Similarity Percentage:
+                <input type="number" id="SimilarityPercentage" min="0" max="100"
+                  value={this.props.similarity}
+                  onChange={this.similaritiesPercentage}
+                />
+              </li>
+              <li>
+                Research Percentage:
+                <input type="number" id="ResearchPercentage" min="1" max="100"
+                  value={this.props.research}
+                  onChange={this.researchPercentage}
+                />
+              </li>
             </ul>
           </div>
         </div>
@@ -77,8 +94,8 @@ class Settings extends Component {
 function mapStateTopProps (state) {
   return {
     similarities: state.settingsReducer.similarities,
-    similarity: state.settingsReducer.similarity,   
-    research: state.settingsReducer.research,    
+    similarity: state.settingsReducer.similarity,
+    research: state.settingsReducer.research,
     metadata: state.settingsReducer.metadata,
     showSettings: state.applicationReducer.showSettings
   }

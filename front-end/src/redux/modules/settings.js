@@ -30,7 +30,7 @@ function similaritiesPercentage (percentage) {
 function researchPercentage (percentage) {
   return {
     type: RESEARCH_PERCENTAGE,
-    percentage: percentage    
+    percentage: percentage
   }
 }
 
@@ -38,8 +38,7 @@ export const SettingsActions = {
   showSimilaritiesOnly,
   showMetadata,
   similaritiesPercentage,
-  researchPercentage,
-  
+  researchPercentage
 }
 
 // ------------------------------------
@@ -48,9 +47,8 @@ export const SettingsActions = {
 const ACTION_HANDLERS = {
   [SHOW_SIMILARITIES_ONLY]: (state, action) => ({ ...state, similarities: !state.similarities }),
   [SHOW_METADATA]: (state, action) => ({ ...state, metadata: !state.metadata }),
-  [SIMILARITIES_PERCENTAGE]: (state, action) => ({ ...state, similarity: action.percentage}),
-  [RESEARCH_PERCENTAGE]: (state, action) => ({ ...state, research: action.percentage }),
-  
+  [SIMILARITIES_PERCENTAGE]: (state, action) => ({ ...state, similarity: action.percentage }),
+  [RESEARCH_PERCENTAGE]: (state, action) => ({ ...state, research: action.percentage })
 }
 
 // ------------------------------------
