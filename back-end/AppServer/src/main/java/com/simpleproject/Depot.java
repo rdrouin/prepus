@@ -23,7 +23,7 @@ public class Depot {
 
     public static String GetAllDepot(){
         // Replace with database call
-        List<String[]> table =  PostgreRequester.call("select remise.id,remise.date,remise.analysefaite,(SELECT COUNT(*) AS Count from iteration2.document where remise.id = document.rem_id), travail.nom from iteration2.remise join iteration2.travail on remise.tra_id = travail.id");
+        List<String[]> table =  PostgreRequester.call("select remise.id, remise.date, remise.analysefaite,(SELECT COUNT(*) AS Count from iteration2.document where remise.id = document.rem_id), travail.nom from iteration2.remise join iteration2.travail on remise.tra_id = travail.id");
 
         String returnedValue = "{\"depots\":[";
         for( String[] row: table ){

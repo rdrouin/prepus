@@ -17,13 +17,13 @@ import main.java.com.simpleproject.FileAnalysis;
 public class ServeletAnalysis extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        String id_Depot = req.getParameter("depot");
-        InsertIntoElasticSearch.encoder(Integer.parseInt(id_Depot));
+        String idDepot = req.getParameter("depot");
+        InsertIntoElasticSearch.encoder(Integer.parseInt(idDepot));
         //FileAnalysis.launchAnalysis(Integer.parseInt(id));
         res.setContentType("text/plain");
         res.setCharacterEncoding( "UTF-8" );
         PrintWriter out = res.getWriter();
-        out.println(id_Depot);
+        out.println(idDepot);
 
     }
 

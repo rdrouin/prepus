@@ -162,7 +162,7 @@ public class InsertIntoElasticSearch {
                 "  }\n" +
                 "}\n",ContentType.APPLICATION_JSON);
         try {
-            requester.performRequest("PUT","/"+id, Collections.<String,String>emptyMap(), body);
+            requester.performRequest("PUT", "/"+id, Collections.<String,String>emptyMap(), body);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -183,7 +183,7 @@ public class InsertIntoElasticSearch {
                 "\"query\": {" +
                     "\"match_all\": {}" +
                 "}" +
-                "}",ContentType.APPLICATION_JSON);
+                "}", ContentType.APPLICATION_JSON);
         try{
             //get all author
             Response indexResponse = requester.performRequest("GET","/"+travail+"/"+depot+"/_search", Collections.<String,String>emptyMap(), body);
@@ -226,7 +226,7 @@ public class InsertIntoElasticSearch {
             HashMap<String,String> params = new HashMap<String,String>();
             params.put("_source", "attachment.content");
 
-            Response indexResponse = requester.performRequest("GET","/"+travail+"/"+depot+"/" + item + "/_source", params);
+            Response indexResponse = requester.performRequest("GET", "/"+travail+"/"+depot+"/" + item + "/_source", params);
             String response = InputStreamToString(indexResponse.getEntity().getContent());
             JSONObject obj = new JSONObject(response);
             response = obj.getJSONObject("attachment").getString("content");
@@ -345,7 +345,7 @@ public class InsertIntoElasticSearch {
                     HashMap<String,String> param = new HashMap<String,String>();
                     param.put("pipeline", "attachment");
 
-                    Response response = requester.performRequest("PUT","/"+travail_id+"/"+depot+"/"+row[0],param, body);
+                    Response response = requester.performRequest("PUT", "/"+travail_id+"/"+depot+"/"+row[0], param, body);
                     System.out.println(response);
                 }
             }
