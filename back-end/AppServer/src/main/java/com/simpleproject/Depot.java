@@ -12,6 +12,9 @@ public class Depot {
     public static String str(String id, String name) {
         return "{\"id\": \"" + id + "\",\"name\":\"" + name + "\"}";
     }
+    public static String str(String id,String date, String done, String count, String name) {
+        return "{\"id\": \"" + id + "\",\"date\": \"" + date + "\",\"analyze\": \"" + done + "\",\"count\": \"" + count + "\",\"name\":\"" + name + "\"}";
+    }
 
     public static String sim(String[] list)
     {
@@ -20,11 +23,11 @@ public class Depot {
 
     public static String GetAllDepot(){
         // Replace with database call
-        List<String[]> table =  PostgreRequester.call("select remise.id, travail.nom from iteration2.remise join iteration2.travail on remise.tra_id = travail.id");
+        List<String[]> table =  PostgreRequester.call("select remise.id, remise.date, remise.analysefaite,(SELECT COUNT(*) AS Count from iteration2.document where remise.id = document.rem_id), travail.nom from iteration2.remise join iteration2.travail on remise.tra_id = travail.id");
 
         String returnedValue = "{\"depots\":[";
         for( String[] row: table ){
-            returnedValue += str(row[0], row[1]) + ",";
+            returnedValue += str(row[0], row[1], row[2], row[3], row[4]) + ",";
         }
         returnedValue = returnedValue.substring(0, returnedValue.length() - 1);
         returnedValue += "]}";

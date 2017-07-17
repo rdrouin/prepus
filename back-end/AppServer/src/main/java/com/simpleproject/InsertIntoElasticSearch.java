@@ -3,32 +3,41 @@ import main.java.com.requester.ElasticRequester;
 import main.java.com.requester.HttpRequester;
 import main.java.com.requester.PostgreRequester;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.util.EntityUtils;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexResponse;
+
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+
 import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.script.mustache.SearchTemplateRequestBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.json.HTTP;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.io.InputStream;
+
 import java.util.*;
 
 public class InsertIntoElasticSearch {
+
+    public static String InputStreamToString(InputStream in)
+    {
+        try {
+            String response = "";
+            while (in.available() != 0) {
+                response += (char) in.read();
+            }
+            return response;
+        }
+            catch (Exception e) {
+            return "";
+        }
+    }
 
     public static boolean createPipeline(){
         RestClient requester = ElasticRequester.getInstance();
@@ -44,9 +53,9 @@ public class InsertIntoElasticSearch {
                 "  ] \n" +
                 "}\n",ContentType.APPLICATION_JSON);
         try {
-            requester.performRequest("PUT","_ingest/pipeline/attachment", Collections.<String,String>emptyMap(), body);
+            requester.performRequest("PUT","/_ingest/pipeline/attachment", Collections.<String,String>emptyMap(), body);
         } catch (IOException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
 
             return false;
         }
@@ -153,13 +162,14 @@ public class InsertIntoElasticSearch {
                 "  }\n" +
                 "}\n",ContentType.APPLICATION_JSON);
         try {
-            requester.performRequest("PUT",id, Collections.<String,String>emptyMap(), body);
+            requester.performRequest("PUT", "/"+id, Collections.<String,String>emptyMap(), body);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
+
     public static void analyseMeta(String travail, String depot){
         RestClient requester = ElasticRequester.getInstance();
         ProjectProperties properties = ProjectProperties.getInstance();
@@ -168,19 +178,133 @@ public class InsertIntoElasticSearch {
         paramMap.put("q", "*:*");
         paramMap.put("pretty", "true");
 
-        HttpEntity body = new NStringEntity("{" +
-                "\"_source\":[\"attachment.author\",\"attachment.content\"],\n" +
-                "\"query\": {\n" +
-                "\"match_all\": {" +
-                "}\n" +
+        HttpEntity body = new NStringEntity(
+                "{\"_source\":[\"attachment.author\"],\n" +
+                "\"query\": {" +
+                    "\"match_all\": {}" +
                 "}" +
-                "}",ContentType.APPLICATION_JSON);
+                "}", ContentType.APPLICATION_JSON);
         try{
             //get all author
             Response indexResponse = requester.performRequest("GET","/"+travail+"/"+depot+"/_search", Collections.<String,String>emptyMap(), body);
+
+            String response = InputStreamToString(indexResponse.getEntity().getContent());
+
+            JSONObject jsonResponse = new JSONObject(response);
+            int size = jsonResponse.getJSONObject("hits").getInt("total");
+            JSONArray hits = jsonResponse.getJSONObject("hits").getJSONArray("hits");
+
+            String author1, author2, id1, id2;
+            for (int i = 0; i < size - 1; i++)
+            {
+                id1 = hits.getJSONObject(i).getString("_id");
+                author1 =  hits.getJSONObject(i).getJSONObject("_source").getJSONObject("attachment").getString("author");
+                for (int j = i + 1; j < size; j++)
+                {
+                    id2 = hits.getJSONObject(j).getString("_id");
+                    System.out.println("Documents " + id1 + " " + id2);
+                    author2 =  hits.getJSONObject(j).getJSONObject("_source").getJSONObject("attachment").getString("author");
+
+                    if (author1.equals(author2))
+                    {
+                        System.out.println("Same author for documents " + id1 + " " + id2);
+                        PostgreRequester.call("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
+                    }
+                }
+            }
+
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void  analyseTextuelle(String travail, String depot, List<String> idList) throws Exception{
+        RestClient requester = ElasticRequester.getInstance();
+        for (Iterator<String> i = idList.iterator(); i.hasNext(); ) {
+            String item = i.next();
+
+            HashMap<String,String> params = new HashMap<String,String>();
+            params.put("_source", "attachment.content");
+
+            Response indexResponse = requester.performRequest("GET", "/"+travail+"/"+depot+"/" + item + "/_source", params);
+            String response = InputStreamToString(indexResponse.getEntity().getContent());
+            JSONObject obj = new JSONObject(response);
+            response = obj.getJSONObject("attachment").getString("content");
+
+            response = response.replaceAll("\\n", "").replaceAll("\\s+", " ");
+            String[] sentences = response.split(". ");
+            List<String> search = new ArrayList<String>();
+            //System.out.println(words.length);
+            int numberOfSentences = (int) (sentences.length * .25);
+            int rand = 0;
+
+            Random r = new Random();
+            // Select random phrases to compare
+            for (int j = 0; j < numberOfSentences; j++) {
+                //System.out.println(r.nextInt(words.length));
+                rand = r.nextInt(sentences.length);
+                search.add(sentences[rand]);
+            }
+
+            // Cut down sentences to trigramme
+            JSONObject trigrammes = new JSONObject();
+            trigrammes.put("tokens",new JSONArray());
+            for (int j = 0; j < search.size(); j++) {
+                HttpEntity body = new NStringEntity(
+                        "{\"analyzer\": \"trigrammes\", \n" +
+                                "  \"text\": \"" + search.get(j) + "Jai une deuxième phrase\"}", ContentType.APPLICATION_JSON);
+
+                indexResponse = requester.performRequest("GET", "/1/_analyze", Collections.emptyMap(), body);
+                response = InputStreamToString(indexResponse.getEntity().getContent());
+
+                obj = new JSONObject(response);
+                trigrammes.getJSONArray("tokens").put(obj.getJSONArray("tokens"));
+            }
+
+            for (int j = 0; j < trigrammes.getJSONArray("tokens").length(); j++) {
+                System.out.println(trigrammes.getJSONArray("tokens").getJSONObject(j).getString("token"));
+            }
+
+            // Final
+            //System.out.println(words.length / 10);
+            /*for (int j = 0; j < search.size(); j++) {
+                Map<String, Object> template_params = new HashMap<>();
+                template_params.put("param_gender", search.get(j));
+                SearchResponse res = new SearchTemplateRequestBuilder(client)
+                        .setScript("{\n  \"query\" : {\n" +
+                                "            \"match_phrase\" : {\n" +
+                                "                \"attachment.content\" : \"{{param_gender}}\"\n" +
+                                "            }\n" +
+                                "        }\n}")
+                        .setScriptType(ScriptType.INLINE)
+                        .setScriptParams(template_params)
+                        //.setScript("template_gender")
+                        //.setScriptType(ScriptType.FILE)
+                        //.setScriptParams(template_params)
+                        .setRequest(new SearchRequest())
+                        .get()
+                        .getResponse();
+//                            SearchResponse res = client.prepareSearch(travail_id)
+//
+//                                    .setQuery(QueryBuilders.queryStringQuery(search.get(j))).setSearchType("match_phrase")                 // Query
+//                                    .get();
+                String testboo = String.valueOf(res.getHits());
+                SearchHits hits = res.getHits();
+                for (SearchHit hit : hits) {
+                    //Map<String, SearchHitField> fields = hit.getFields();
+                    //SearchHitField field = fields.get("id");
+                    if (!hit.getId().equals(item)) {
+                        AddResult.insertResult(Integer.parseInt(item), Integer.parseInt(hit.getId()), 2, (int) (hit.getScore()), "elastic", search.get(j), search.get(j));
+                        // System.out.println(search.get(j)+ "  "+ item);
+                        //System.out.println(hit.getId());
+                        // System.out.println( hit.getScore());
+                    }
+                }
+                //JSONObject.internalResponse
+                //System.out.println(res.internalResponse);
+            }*/
+        }
+
     }
 
     public static void encoder(int depot) {
@@ -207,9 +331,8 @@ public class InsertIntoElasticSearch {
 
             RestClient requester = ElasticRequester.getInstance();
             ProjectProperties properties = ProjectProperties.getInstance();
-            //HttpRequester requester = new HttpRequester();
 
-            List<String> l_id = new ArrayList<>();
+            List<String> idList = new ArrayList<>();
             for( String[] row: result ){
                 //push files in elasticSearch
                 String path = properties.getProperty("document.path")+ row[1] + row[2];
@@ -217,86 +340,18 @@ public class InsertIntoElasticSearch {
                     HttpEntity body = new NStringEntity("{" +
                             "\"data\":\"" + PdfTo64.encoder(properties.getProperty("document.path") + row[1] + row[2]) + "\"" +
                             "}",ContentType.APPLICATION_JSON);
-                    l_id.add(row[0]);
+                    idList.add(row[0]);
                     //requester.executePost("http://s6ie1702.gel.usherbrooke.ca:9300" + "/"+travail_id+"/"+depot+"/"+row[0], "", body);
                     HashMap<String,String> param = new HashMap<String,String>();
                     param.put("pipeline", "attachment");
 
-                    requester.performRequest("PUT","/"+travail_id+"/"+depot+"/"+row[0],param, body);
+                    Response response = requester.performRequest("PUT", "/"+travail_id+"/"+depot+"/"+row[0], param, body);
+                    System.out.println(response);
                 }
             }
 
-
-            //requester.close();
-            analyseMeta(travail_id,travail_id);
-
-           /* for (Iterator<String> i = l_id.iterator(); i.hasNext(); ) {
-                String item = i.next();
-                GetResponse response = client.prepareGet(travail_id, Integer.toString(depot), item).get();
-                String test = String.valueOf(response.getSourceAsString());
-
-                JSONObject obj = new JSONObject(test);
-                String bob = ((JSONObject) (obj.get("attachment"))).get("content").toString();
-                bob = bob.replaceAll("\\n", "").replaceAll("\\s+", " ");
-                String[] words = bob.split(" ");
-                List<String> search = new ArrayList<String>();
-                //System.out.println(words.length);
-                int numberofquatuor = words.length / 10;
-                int rand = 0;
-                StringJoiner joiner = new StringJoiner(" ");
-                joiner.add("01").add("02").add("03");
-                Random r = new Random();
-                for (int j = 0; j < numberofquatuor; j++) {
-                    //System.out.println(r.nextInt(words.length));
-                    rand = r.nextInt(words.length);
-                    Arrays.copyOfRange(words, rand, rand + 4);
-                    if (rand + 4 < words.length)
-                        search.add(String.join(" ", Arrays.copyOfRange(words, rand, rand + 4)));
-                }
-
-                // Final
-                //System.out.println(words.length / 10);
-                for (int j = 0; j < search.size(); j++) {
-
-                    Map<String, Object> template_params = new HashMap<>();
-                    template_params.put("param_gender", search.get(j));
-                    SearchResponse res = new SearchTemplateRequestBuilder(client)
-                            .setScript("{\n  \"query\" : {\n" +
-                                    "            \"match_phrase\" : {\n" +
-                                    "                \"attachment.content\" : \"{{param_gender}}\"\n" +
-                                    "            }\n" +
-                                    "        }\n}")
-                            .setScriptType(ScriptType.INLINE)
-                            .setScriptParams(template_params)
-                            //.setScript("template_gender")
-                            //.setScriptType(ScriptType.FILE)
-                            //.setScriptParams(template_params)
-                            .setRequest(new SearchRequest())
-                            .get()
-                            .getResponse();
-//                            SearchResponse res = client.prepareSearch(travail_id)
-//
-//                                    .setQuery(QueryBuilders.queryStringQuery(search.get(j))).setSearchType("match_phrase")                 // Query
-//                                    .get();
-                    String testboo = String.valueOf(res.getHits());
-
-                    SearchHits hits = res.getHits();
-
-                    for (SearchHit hit : hits) {
-                        //Map<String, SearchHitField> fields = hit.getFields();
-                        //SearchHitField field = fields.get("id");
-
-                        if (!hit.getId().equals(item)) {
-                            AddResult.insertResult(Integer.parseInt(item), Integer.parseInt(hit.getId()), 2, (int) (hit.getScore()), "elastic", search.get(j), search.get(j));
-                            // System.out.println(search.get(j)+ "  "+ item);
-                            //System.out.println(hit.getId());
-                            // System.out.println( hit.getScore());
-                        }
-                    }
-                    //JSONObject.internalResponse
-                    //System.out.println(res.internalResponse);
-                }
-            }*/
+            analyseMeta(travail_id, Integer.toString(depot));
+            analyseTextuelle(travail_id, Integer.toString(depot), idList);
         }
         catch (Exception e) {
             e.printStackTrace();
