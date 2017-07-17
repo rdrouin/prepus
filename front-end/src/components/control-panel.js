@@ -18,18 +18,20 @@ class ControlPanel extends Component {
   }
 
   analyseDepot () {
-    this.props.analyseDepot()
+    this.props.analyseDepot(this.props.metadata, this.props.similarity, this.props.research)
   }
 
   removeActiveDepot () {
     this.props.removeActiveDepot()
   }
+
   render () {
     return (
       <div>
         {<button onClick={this.props.removeActiveDepot}>Back to Depot List</button>}
         <br />
-        {this.props.activeFileLeft === -1 ? <button onClick={this.loadDepotIfNeeded}>Refresh</button> : ''}
+        {this.props.activeFileLeft === -1
+          ? <button onClick={this.loadDepotIfNeeded}>Refresh</button> : ''}
         <br />
         <button onClick={this.analyseDepot}>Analyse</button>
       </div>
@@ -40,7 +42,10 @@ class ControlPanel extends Component {
 function mapStateTopProps (state) {
   return {
     activeFileLeft: state.applicationReducer.activeFileLeft,
-    similarities: state.settingsReducer.similarities
+    similarities: state.settingsReducer.similarities,
+    similarity: state.settingsReducer.similarity,
+    research: state.settingsReducer.research,
+    metadata: state.settingsReducer.metadata
   }
 }
 

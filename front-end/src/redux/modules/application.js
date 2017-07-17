@@ -86,7 +86,7 @@ const ACTION_HANDLERS = {
   [REMOVE_ACTIVE_FILE_RIGHT]: (state, action) => ({ ...state, activeFileRight: -1 }),
   [REMOVE_ACTIVE_FILES]: (state, action) => ({ ...state, activeFileRight: -1, activeFileLeft: -1 }),
   [SET_ACTIVE_DEPOT]: (state, action) => ({...state, activeDepot: action.id}),
-  [REMOVE_ACTIVE_DEPOT]: (state, action) => ({...state, activeDepot: -1}),
+  [REMOVE_ACTIVE_DEPOT]: (state, action) => ({...state, activeDepot: -1, activeFileLeft:-1, activeFileRight:-1}),
   [SHOW_SETTINGS]: (state, action) => ({...state, showSettings: !state.showSettings})
 }
 

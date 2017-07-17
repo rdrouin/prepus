@@ -19,10 +19,11 @@ const config = {
   // ----------------------------------
   // Server Configuration
   // ----------------------------------
-  //server_host: process.env.HOST || 'localhost',
-  //server_port: process.env.PORT || 5000,
- server_host : 's6ie1702.gel.usherbrooke.ca',
- server_port : process.env.PORT || 80,
+
+  server_host: process.env.HOST || 'localhost',
+  server_port: process.env.PORT || 5000,
+// server_host : 's6ie1702.gel.usherbrooke.ca',
+ //server_port : process.env.PORT || 80,
 
   // ----------------------------------
   // Compiler Configuration
