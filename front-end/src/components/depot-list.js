@@ -26,9 +26,10 @@ class DepotList extends Component {
               <thead>
                 <tr>
                   <th>Id</th>
-                  <th>Nom</th>
-                  <th>Nombre de fichiers</th>
-                  <th>Date de fermeture</th>
+                  <th>Name</th>
+                  <th>File Count</th>
+                  <th>Date</th>
+                  <th>Analyzed</th>   
                 </tr>
               </thead>
               <tbody>
