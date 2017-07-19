@@ -17,9 +17,12 @@ import org.json.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import java.io.*;
 
 import java.nio.charset.StandardCharsets;
+
+
 import java.util.*;
 
 public class InsertIntoElasticSearch {
@@ -28,10 +31,12 @@ public class InsertIntoElasticSearch {
     {
         try {
             String response = "";
+
             BufferedReader nin = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String sCurrentLine;
             while ((sCurrentLine = nin.readLine()) != null) {
                 response +=sCurrentLine;
+
             }
             return response;
         }
@@ -232,7 +237,9 @@ public class InsertIntoElasticSearch {
                     if (author1.equals(author2))
                     {
                         System.out.println("Same author for documents " + id1 + " " + id2);
+
                         PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
+
                     }
                 }
             }
@@ -256,10 +263,12 @@ public class InsertIntoElasticSearch {
             response = obj.getJSONObject("attachment").getString("content");
 
             response = response.replaceAll("\\n", "").replaceAll("\\s+", " ");
+
             String[] sentences = response.split("\\. ");
             List<String> search = new ArrayList<String>();
             //System.out.println(words.length);
             int numberOfSentences = (int) (sentences.length * .05);
+
             int rand = 0;
 
             Random r = new Random();
@@ -271,6 +280,7 @@ public class InsertIntoElasticSearch {
             }
 
             // Cut down sentences to trigramme
+
             //JSONObject trigrammes = new JSONObject();
             //trigrammes.put("tokens",new JSONArray());
             for (int j = 0; j < search.size(); j++) {
@@ -282,11 +292,13 @@ public class InsertIntoElasticSearch {
                         "{\"analyzer\": \"pentagrammes\", \n" +
                                 "  \"text\": \"" + search.get(j) + "\"}", ContentType.APPLICATION_JSON);
 
+
                 indexResponse = requester.performRequest("GET", "/1/_analyze", Collections.emptyMap(), body);
                 response = InputStreamToString(indexResponse.getEntity().getContent());
 
                 obj = new JSONObject(response);
                 trigrammes.getJSONArray("tokens").put(obj.getJSONArray("tokens"));
+
                 for (int p = 0; p < trigrammes.getJSONArray("tokens").length(); p++) {
                     for(int k =0; k<trigrammes.getJSONArray("tokens").getJSONArray(p).length();k++){
                         //System.out.println( trigrammes.getJSONArray("tokens").getJSONArray(p).getJSONObject(k).getString("token"));
@@ -354,6 +366,7 @@ public class InsertIntoElasticSearch {
                     }
                 }
             }
+
             // Final
             //System.out.println(words.length / 10);
             /*for (int j = 0; j < search.size(); j++) {
@@ -393,7 +406,9 @@ public class InsertIntoElasticSearch {
                 //System.out.println(res.internalResponse);
             }*/
         }
+
         System.out.println("done");
+
 
     }
 
