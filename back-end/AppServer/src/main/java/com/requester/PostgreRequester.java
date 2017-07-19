@@ -41,5 +41,26 @@ public class PostgreRequester {
         }
         return null;
     }
+    public static int update(String query) {
+        ArrayList<String> result = new ArrayList<String>();
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = DriverManager.getConnection(url, user, passwd);
+
+            //Création d'un objet Statement
+            Statement stm = conn.createStatement();
+
+            int rs = stm.executeUpdate(query);
+
+
+            stm.close();
+
+            return rs;
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return -1;
+    }
 
 }

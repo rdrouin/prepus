@@ -232,7 +232,7 @@ public class InsertIntoElasticSearch {
                     if (author1.equals(author2))
                     {
                         System.out.println("Same author for documents " + id1 + " " + id2);
-                        PostgreRequester.call("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
+                        PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
                     }
                 }
             }
@@ -321,6 +321,7 @@ public class InsertIntoElasticSearch {
                         JSONObject jsonResponse = new JSONObject(response);
                         int size = jsonResponse.getJSONObject("hits").getInt("total");
                         String text1 = search.get(j);
+                        text1 = text1.replaceAll("\n"," ").replaceAll("'", "''");
                         if(size > 1) {
                             for (int l = 0; l < size; l++) {
                                 JSONObject hit = jsonResponse.getJSONObject("hits").getJSONArray("hits").getJSONObject(l);
@@ -330,21 +331,29 @@ public class InsertIntoElasticSearch {
                                     JSONArray match = hit.getJSONObject("highlight").getJSONArray("attachment.content");
                                     for (int m = 0; m < match.length(); m++) {
                                         String text2 = match.getString(m);
-                                        PostgreRequester.call("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+item+", "+id+", "+2 +", "+score+", \'Elastic\', \' "+text1+" \', \' "+text2+" \')");
+                                        text2 = text2.replaceAll("\n"," ").replaceAll("'", "''");
+
+                                        int indexMark = text2.indexOf("<mark>");
+                                        int indexPoint = text2.indexOf(".");
+                                        while(indexPoint<indexMark){
+                                            text2 = text2.substring(indexPoint+1);
+                                            indexMark = text2.indexOf("<mark>");
+                                            indexPoint = text2.indexOf(".");
+                                        }
+                                        if(indexPoint>indexMark){
+                                            text2 = text2.substring(0,indexPoint);
+                                        }
+
+                                        PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+item+", "+id+", "+2 +", "+score+", \'Elastic\', \' "+text1+" \', \' "+text2+" \')");
 
 
                                     }
                                 }
-                                // PostgreRequester.call("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+item+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
                             }
                         }
                     }
                 }
             }
-
-
-
-
             // Final
             //System.out.println(words.length / 10);
             /*for (int j = 0; j < search.size(); j++) {
