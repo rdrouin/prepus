@@ -17,7 +17,7 @@ export default class File extends Component {
       <tr>
         <td onClick={this.setActiveFile}>{this.props.file.name}</td>
         <td>{this.props.file.cip}</td>
-        <td> {this.props.file.size}</td>
+        <td>{this.props.file.size}</td>
       </tr>
     )
   }
