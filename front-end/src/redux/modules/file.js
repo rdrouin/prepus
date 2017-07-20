@@ -83,9 +83,9 @@ export const FileActions = {
   loadDepotsList
 }
 
-// ------------------------------------
+// -----------------------------------
 // Action Handlers
-// ------------------------------------
+// -----------------------------------
 const ACTION_HANDLERS = {
   [REQUEST_DEPOT]: (state, action) => ({ ...state }),
   [REQUEST_ANALYSIS]: (state, action) => ({ ...state }),
@@ -97,7 +97,8 @@ function analyseDepot (metadata, similarityPercentage, researchPercentage) {
   return dispatch => {
     dispatch(requestAnalysis())
     return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/analysis?
-depot=1&metadata=${metadata}&
+depot=1&
+metadata=${metadata}&
 similarityPercentage=${similarityPercentage}&
 researchPercentage=${researchPercentage}`, {method: 'POST', headers:{'Content-Type':'application/json'}})
   }

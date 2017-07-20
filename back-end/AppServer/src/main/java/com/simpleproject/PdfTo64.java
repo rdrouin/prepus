@@ -9,19 +9,25 @@ import java.nio.file.Files;
  */
 public class PdfTo64 {
 
-    public static String encoder(String path){
-        try {
-            File file = new File(path);
-            if (!file.exists()) {
-                System.out.println("erreur");
-            }
-            //Reading and encoding files
-            byte fileContent[] = Files.readAllBytes(file.toPath());
-            String result64 = javax.xml.bind.DatatypeConverter.printBase64Binary(fileContent);
-            return result64;
-        }catch(IOException e) {
-            e.printStackTrace();
+    public static String encoder(String path) throws Exception {
+
+        String[] splitPath = path.split("\\.");
+        String extension = splitPath[1];
+
+        if (!extension.equals("pdf")) {
+            throw new UnsupportedOperationException();
         }
-        return "";
+
+        File file = new File(path);
+
+        if (!file.exists()) {
+            throw new Exception("File does not exist");
+        }
+
+        //Reading and encoding files
+        byte fileContent[] = Files.readAllBytes(file.toPath());
+        String result64 = javax.xml.bind.DatatypeConverter.printBase64Binary(fileContent);
+        
+        return result64;
     }
 }

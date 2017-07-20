@@ -16,8 +16,12 @@ public class Depot {
         return "{\"id\": \"" + id + "\",\"date\": \"" + date + "\",\"analyze\": \"" + done + "\",\"count\": \"" + count + "\",\"name\":\"" + name + "\"}";
     }
 
-    public static String sim(String[] list)
+    public static String sim(String[] list) throws Exception
     {
+        if(list.length != 4) {
+            throw new Exception("Expected exactly four elements inside String array");
+        }
+
         return "{\"file1\":\"" + list[0] + "\",\"file2\":\"" + list[1] + "\",\"percent\":\"" + list[2] + "\",\"type\":\"" + list[3] + "\"}";
     }
 

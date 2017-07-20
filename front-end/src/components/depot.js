@@ -19,7 +19,6 @@ export default class Depot extends Component {
         <td>{this.props.depot.count}</td>
         <td>{this.props.depot.date}</td>
         <td>{this.props.depot.analyze === '1' ? 'Oui' : 'Non'}</td>
-        {console.log(this.props.depot.analyze)}
       </tr>
     )
   }
