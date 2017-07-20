@@ -249,7 +249,7 @@ public class InsertIntoElasticSearch {
         }
     }
 
-    public static void  analyseTextuelle(String travail, String depot, List<String> idList) throws Exception{
+    public static void  analyseTextuelle(String travail, String depot, List<String> idList, int similarityPercentage) throws Exception{
         RestClient requester = ElasticRequester.getInstance();
         for (Iterator<String> i = idList.iterator(); i.hasNext(); ) {
             String item = i.next();
@@ -267,7 +267,7 @@ public class InsertIntoElasticSearch {
             String[] sentences = response.split("\\. ");
             List<String> search = new ArrayList<String>();
             //System.out.println(words.length);
-            int numberOfSentences = (int) (sentences.length * .05);
+            int numberOfSentences = (int) (sentences.length * ((float)similarityPercentage/100));
 
             int rand = 0;
 
@@ -369,7 +369,7 @@ public class InsertIntoElasticSearch {
         System.out.println("done");
     }
 
-    public static void encoder(int depot) {
+    public static void encoder(int depot, int metadata, int similarityPercentage ) {
         createPipeline();
         String travailFromRemiseQuery = "SELECT tra_id from iteration2.remise WHERE id = " + depot + ";";
         String insertQuery;
@@ -411,9 +411,10 @@ public class InsertIntoElasticSearch {
                     System.out.println(response);
                 }
             }
-
-            analyseMeta(travail_id, Integer.toString(depot));
-            analyseTextuelle(travail_id, Integer.toString(depot), idList);
+            if(metadata>0) {
+                analyseMeta(travail_id, Integer.toString(depot));
+            }
+            analyseTextuelle(travail_id, Integer.toString(depot), idList, similarityPercentage);
         }
         catch (Exception e) {
             e.printStackTrace();
