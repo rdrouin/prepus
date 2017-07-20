@@ -20,18 +20,6 @@ class FilesLeft extends Component {
   render () {
     if (this.props.files === undefined) return <div></div>
 
-    var styles = {
-      alignment: {
-        textAlign: 'left'
-      },
-      borders: {
-        border: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        borderRadius: 5,
-        marginTop: 20
-      }
-    }
     let leftList = ''
     if (this.props.activeFileLeft === -1) {
       if (this.props.similarities === true) {
@@ -43,18 +31,26 @@ class FilesLeft extends Component {
         )
       }
     } else if (this.props.activeFileLeft > 0) {
-      leftList = this.props.files.filter(file => file.id === this.props.activeFileLeft)
+      leftListExpanded = this.props.files.filter(file => file.id === this.props.activeFileLeft)
         .map(file => <FileExpanded file={file} key={file.id} />)
     }
     return (
-      <div className="col-lg-5" style={styles.borders}>
-        {this.props.activeFileLeft !== -1
-          ? <button onClick={this.props.removeActiveFiles} style={{ float: 'right' }}>X</button>
-          : ''
-        }
-        <ul className="list-unstyled" style={styles.alignment}>
-          {leftList}
-        </ul>
+      <div className="row">
+      {this.props.currentFiles !== []
+        ? <div className="col-lg-6">
+          <table className="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Fichiers</th>
+                <th>Cips</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>{leftList}</tbody>
+          </table>
+        </div>
+        : <p>Aucun fichiers dans le dépot</p>
+      }
       </div>
     )
   }

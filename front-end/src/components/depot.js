@@ -18,8 +18,7 @@ export default class Depot extends Component {
         <td onClick={this.setActiveDepot}><a href="#">{this.props.depot.name}</a></td>
         <td>{this.props.depot.count}</td>
         <td>{this.props.depot.date}</td>
-        <td>{this.props.analyze
-          ? 'Yes' : 'No'}</td>
+        <td>{this.props.depot.analyze === '1' ? 'Oui' : 'Non'}</td>
       </tr>
     )
   }

@@ -28,12 +28,13 @@ class ControlPanel extends Component {
   render () {
     return (
       <div>
-        {<button onClick={this.props.removeActiveDepot}>Back to Depot List</button>}
+        <button onClick={this.analyseDepot} className="btn btn-default">Analyser</button>
+        <br />
+        <button className="btn btn-default" onClick={this.props.removeActiveDepot}>Retour dépots</button>
         <br />
         {this.props.activeFileLeft === -1
-          ? <button onClick={this.loadDepotIfNeeded}>Refresh</button> : ''}
-        <br />
-        <button onClick={this.analyseDepot}>Analyse</button>
+          ? <button onClick={this.loadDepotIfNeeded} className="btn btn-default">Rafraichir la Liste</button>
+          : ''}
       </div>
     )
   }

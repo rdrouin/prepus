@@ -54,9 +54,11 @@ class Settings extends Component {
     return (
       <div>
         <div className="row">
-          <h4>Settings</h4>
-          <button onClick={this.props.showSettings} style={{ float: 'right' }}>X</button>
+          <h3>Paramètres</h3>
           <div className="col-lg-6" style={styles.borders}>
+            <a href="#" onClick={this.props.showSettings}>
+              <span className="glyphicon glyphicon-remove-circle" style={{'float':'right'}} aria-hidden="true"></span>
+            </a>
             <ul className="list-unstyled" style={styles.alignment}>
               <li>
                 <input type="checkbox" name="showSimilaritiesOnly"
