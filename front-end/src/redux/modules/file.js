@@ -1,34 +1,3 @@
-// import {fetch} from 'isomorphic-fetch'
-/*
-const jsonData = `{"depot":
-{"id" : "1","files" : [{"id" : "1","name" : "Document1.pdf"},
-{"id" : "2","name" : "travaux2.pdf"},{"id" : "5","name" : "belo2302.pdf"},
-{"id" : "6","name" : "ethique.pdf"},{"id" : "10","name" : "parfait.pdf"}],
-"similarities" :
- [{"file1" : "1","file2" : "2","percent" : "3","type"  : "4"},
- {"file1" : "5","file2" : "6","percent" : "7","type"  : "8"}]}}`
-
-const jsonDataFinalBaton = `{"depot":
-  {"id":"2",
-  "files":[
-    {"id": "1","name":"blablop.docx"},
-    {"id": "5","name":"texteidentique1.docx"},
-    {"id": "4","name":"texteidentique1.docx"},
-    {"id": "3","name":"m2.docx"},
-    {"id": "2","name":"meta1.docx"}
-  ],"similarities":[
-    {"file1":"4","file2":"5","percent":"100","type":"1"},
-    {"file1":"5","file2":"4","percent":"100","type":"1"}
-  ]}
-}`
-
-const jsonDepotsList = `{"depots":[
-  {"id": "1","name":"Rapport 1"},
-  {"id": "2","name":"Rapport final"},
-  {"id": "3","name":"Rapport labo"}
-]}`
-*/
-
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -105,19 +74,6 @@ researchPercentage=${researchPercentage}`, {method: 'POST', headers:{'Content-Ty
 }
 
 function loadDepot (depotId) {
-  /* if (depotId === '1') {
-    return dispatch => {
-      dispatch(requestDepot(depotId))
-      var json = JSON.parse(jsonData)
-      return dispatch(receiveDepot(json))
-    }
-  } else if (depotId === '2') {
-    return dispatch => {
-      dispatch(requestDepot(depotId))
-      var json = JSON.parse(jsonDataFinalBaton)
-      return dispatch(receiveDepot(json))
-    }
-  } */
   return dispatch => {
     dispatch(requestDepot(depotId))
     return fetch(`http://s6ie1702.gel.usherbrooke.ca:8080/api/depot/${depotId}`, { method: 'GET' })
@@ -139,7 +95,6 @@ function shouldLoadDepot (state, depotId) {
   return state.depots.filter(depot => depot.id === depotId)[0].files === undefined
 }
 
-// dispatch(receiveDepot(response))
 function parseFiles (state, action) {
   var newState = []
   var response = action.payload
@@ -183,12 +138,7 @@ function loadDepotsList () {
        .then(json => dispatch(receiveDepotsList(json)))
   }
 }
-/*
-  return dispatch => {
-    dispatch(requestDepotsList())
-    var json = JSON.parse(jsonDepotsList)
-    return dispatch(receiveDepotsList(json))
-  }*/
+
 function parseDepotsList (state, action) {
   var depots = action.payload.depots
   var newDepots = []
