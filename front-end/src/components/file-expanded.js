@@ -27,9 +27,9 @@ class FileExpanded extends Component {
         <p>{this.props.file.name}</p>
         <p>{this.props.file.size}</p>
         <p>{this.props.file.id === this.props.activeFileLeft && this.props.activeFileRight !== -1
-          ? similaritiesLeft.map(sim => <p>{sim.text}</p>) : ''}</p>
+          ? similaritiesLeft.map(sim => <p dangerouslySetInnerHTML={{__html: sim.text}} />) : ''}</p>
         <p>{this.props.file.id === this.props.activeFileRight
-          ? similaritiesRight.map(sim => <p>{sim.text}</p>) : ''} </p>
+          ? similaritiesRight.map(sim => <p dangerouslySetInnerHTML={{__html: sim.text}} />) : ''} </p>
       </div>
     )
   }
