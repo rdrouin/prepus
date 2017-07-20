@@ -17,9 +17,11 @@ import org.json.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
+
+import java.nio.charset.StandardCharsets;
+
 
 import java.util.*;
 
@@ -29,8 +31,12 @@ public class InsertIntoElasticSearch {
     {
         try {
             String response = "";
-            while (in.available() != 0) {
-                response += (char) in.read();
+
+            BufferedReader nin = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String sCurrentLine;
+            while ((sCurrentLine = nin.readLine()) != null) {
+                response +=sCurrentLine;
+
             }
             return response;
         }
@@ -67,13 +73,14 @@ public class InsertIntoElasticSearch {
         RestClient requester = ElasticRequester.getInstance();
 
         HttpEntity body = new NStringEntity("{\n" +
-                "  \"mappings\": {\n" +
+              " \"mappings\": {\n" +
                 "    \"document\" : {\n" +
                 "      \"properties\" : {\n" +
                 "        \"attachment\": {\n" +
                 "          \"properties\": {\n" +
                 "            \"content\": {\n" +
                 "              \"type\": \"text\",\n" +
+                "              \"term_vector\" : \"with_positions_offsets\",\n" +
                 "              \"fields\": {\n" +
                 "                \"keyword\": {\n" +
                 "                  \"type\": \"keyword\"\n" +
@@ -89,6 +96,10 @@ public class InsertIntoElasticSearch {
                 "                \"trigrammes\": {\n" +
                 "                  \"type\": \"text\",\n" +
                 "                  \"analyzer\": \"trigrammes\"\n" +
+                "                },\n" +
+                "                \"pentagrammes\": {\n" +
+                "                  \"type\": \"text\",\n" +
+                "                  \"analyzer\": \"pentagrammes\"\n" +
                 "                }\n" +
                 "              }\n" +
                 "            },\n" +
@@ -140,6 +151,17 @@ public class InsertIntoElasticSearch {
                 "              \"lowercase\",\n" +
                 "              \"trigrammes_filter\"\n" +
                 "              ]\n" +
+                "        },\n" +
+                "        \"pentagrammes\" : {\n" +
+                "          \"type\": \"custom\",\n" +
+                "          \"tokenizer\": \"standard\",\n" +
+                "          \"char_filter\": [\n" +
+                "            \"html_strip\"\n" +
+                "            ],\n" +
+                "            \"filter\" : [\n" +
+                "              \"lowercase\",\n" +
+                "              \"pentagrammes_filter\"\n" +
+                "              ]\n" +
                 "        }\n" +
                 "      },\n" +
                 "      \"filter\": {\n" +
@@ -156,10 +178,17 @@ public class InsertIntoElasticSearch {
                 "          \"min_shingle_size\" : 3,\n" +
                 "          \"output_unigrams\" : false,\n" +
                 "          \"output_unigrams_if_no_shingles\" : true\n" +
+                "        },\n" +
+                "        \"pentagrammes_filter\": {\n" +
+                "          \"type\" : \"shingle\",\n" +
+                "          \"max_shingle_size\" : 5,\n" +
+                "          \"min_shingle_size\" : 5,\n" +
+                "          \"output_unigrams\" : false,\n" +
+                "          \"output_unigrams_if_no_shingles\" : true\n" +
                 "        }\n" +
                 "      }\n" +
                 "    }\n" +
-                "  }\n" +
+                "  }\n"+
                 "}\n",ContentType.APPLICATION_JSON);
         try {
             requester.performRequest("PUT", "/"+id, Collections.<String,String>emptyMap(), body);
@@ -202,13 +231,11 @@ public class InsertIntoElasticSearch {
                 for (int j = i + 1; j < size; j++)
                 {
                     id2 = hits.getJSONObject(j).getString("_id");
-                    System.out.println("Documents " + id1 + " " + id2);
                     author2 =  hits.getJSONObject(j).getJSONObject("_source").getJSONObject("attachment").getString("author");
 
                     if (author1.equals(author2))
                     {
-                        System.out.println("Same author for documents " + id1 + " " + id2);
-                        PostgreRequester.call("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
+                        PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
                     }
                 }
             }
@@ -232,10 +259,11 @@ public class InsertIntoElasticSearch {
             response = obj.getJSONObject("attachment").getString("content");
 
             response = response.replaceAll("\\n", "").replaceAll("\\s+", " ");
-            String[] sentences = response.split(". ");
+
+            String[] sentences = response.split("\\. ");
             List<String> search = new ArrayList<String>();
-            //System.out.println(words.length);
-            int numberOfSentences = (int) (sentences.length * .25);
+            int numberOfSentences = (int) (sentences.length * .05);
+
             int rand = 0;
 
             Random r = new Random();
@@ -247,64 +275,93 @@ public class InsertIntoElasticSearch {
             }
 
             // Cut down sentences to trigramme
-            JSONObject trigrammes = new JSONObject();
-            trigrammes.put("tokens",new JSONArray());
+
             for (int j = 0; j < search.size(); j++) {
+                JSONObject trigrammes = new JSONObject();
+                trigrammes.put("tokens",new JSONArray());
+                byte[] b = response.getBytes();
+                response = new String(b,"UTF-8");
                 HttpEntity body = new NStringEntity(
-                        "{\"analyzer\": \"trigrammes\", \n" +
-                                "  \"text\": \"" + search.get(j) + "Jai une deuxième phrase\"}", ContentType.APPLICATION_JSON);
+                        "{\"analyzer\": \"pentagrammes\", \n" +
+                                "  \"text\": \"" + search.get(j) + "\"}", ContentType.APPLICATION_JSON);
 
                 indexResponse = requester.performRequest("GET", "/1/_analyze", Collections.emptyMap(), body);
                 response = InputStreamToString(indexResponse.getEntity().getContent());
-
                 obj = new JSONObject(response);
                 trigrammes.getJSONArray("tokens").put(obj.getJSONArray("tokens"));
-            }
+                for (int p = 0; p < trigrammes.getJSONArray("tokens").length(); p++) {
+                    for(int k =0; k<trigrammes.getJSONArray("tokens").getJSONArray(p).length();k++){
+                        String[] motPentagramme  = trigrammes.getJSONArray("tokens").getJSONArray(p).getJSONObject(k).getString("token").split(" ");
+                        int taille= motPentagramme.length;
+                        if(!(taille < 5)) {
+                            //lancer la recherche élastic avectout les pentagramme complet
+                            params = new HashMap<String, String>();
+                            params.put("_source", "highlight");
+                            body = new NStringEntity(
+                                    "{\"query\": {\n" +
+                                            "        \"match_phrase\": {\n" +
+                                            "            \"attachment.content\": {\n" +
+                                            "              \"query\": \"" + trigrammes.getJSONArray("tokens").getJSONArray(p).getJSONObject(k).getString("token") + "\",\n" +
+                                            "\t  \"slop\": 1\n" +
+                                            "            }\n" +
+                                            "        }\n" +
+                                            "    },\n" +
+                                            "    \"highlight\": {\n" +
+                                            "        \"pre_tags\" : [\"<mark>\"],\n" +
+                                            "        \"post_tags\" : [\"</mark>\"],\n" +
+                                            "        \"fields\" : {\n" +
+                                            "            \"attachment.content\" : {\n" +
+                                            "                \"fragmenter\" : \"span\",\n" +
+                                            "                \"boundary_scanner\" : \"sentence\"\n" +
+                                            "            }\n" +
+                                            "        }\n" +
+                                            "    }\n  " +
 
-            for (int j = 0; j < trigrammes.getJSONArray("tokens").length(); j++) {
-                System.out.println(trigrammes.getJSONArray("tokens").getJSONObject(j).getString("token"));
-            }
+                                            "    }", ContentType.APPLICATION_JSON);
+                            indexResponse = requester.performRequest("GET", "/" + travail + "/" + depot + "/_search", params, body);
+                            response = InputStreamToString(indexResponse.getEntity().getContent());
+                            JSONObject jsonResponse = new JSONObject(response);
+                            int size = jsonResponse.getJSONObject("hits").getInt("total");
+                            String text1 = search.get(j);
+                            text1 = text1.replaceAll("\n", " ").replaceAll("'", "''");
 
-            // Final
-            //System.out.println(words.length / 10);
-            /*for (int j = 0; j < search.size(); j++) {
-                Map<String, Object> template_params = new HashMap<>();
-                template_params.put("param_gender", search.get(j));
-                SearchResponse res = new SearchTemplateRequestBuilder(client)
-                        .setScript("{\n  \"query\" : {\n" +
-                                "            \"match_phrase\" : {\n" +
-                                "                \"attachment.content\" : \"{{param_gender}}\"\n" +
-                                "            }\n" +
-                                "        }\n}")
-                        .setScriptType(ScriptType.INLINE)
-                        .setScriptParams(template_params)
-                        //.setScript("template_gender")
-                        //.setScriptType(ScriptType.FILE)
-                        //.setScriptParams(template_params)
-                        .setRequest(new SearchRequest())
-                        .get()
-                        .getResponse();
-//                            SearchResponse res = client.prepareSearch(travail_id)
-//
-//                                    .setQuery(QueryBuilders.queryStringQuery(search.get(j))).setSearchType("match_phrase")                 // Query
-//                                    .get();
-                String testboo = String.valueOf(res.getHits());
-                SearchHits hits = res.getHits();
-                for (SearchHit hit : hits) {
-                    //Map<String, SearchHitField> fields = hit.getFields();
-                    //SearchHitField field = fields.get("id");
-                    if (!hit.getId().equals(item)) {
-                        AddResult.insertResult(Integer.parseInt(item), Integer.parseInt(hit.getId()), 2, (int) (hit.getScore()), "elastic", search.get(j), search.get(j));
-                        // System.out.println(search.get(j)+ "  "+ item);
-                        //System.out.println(hit.getId());
-                        // System.out.println( hit.getScore());
+                            //Si il y a un match autre qu'avec lui-meme
+                            if (size > 1) {
+                                for (int l = 0; l < size; l++) {
+                                    JSONObject hit = jsonResponse.getJSONObject("hits").getJSONArray("hits").getJSONObject(l);
+                                    int score = (int) (hit.getDouble("_score"));
+                                    String id = hit.getString("_id");
+
+                                    //Ne pas analyser les match avec lui-meme
+                                    if (!id.equals(item)) {
+                                        JSONArray match = hit.getJSONObject("highlight").getJSONArray("attachment.content");
+                                        for (int m = 0; m < match.length(); m++) {
+
+                                            //formatage de la reponse pour l'ajout a la bd
+                                            String text2 = match.getString(m);
+                                            text2 = text2.replaceAll("\n", " ").replaceAll("'", "''");
+                                            int indexMark = text2.indexOf("<mark>");
+                                            int indexPoint = text2.indexOf(".");
+                                            while (indexPoint < indexMark) {
+                                                text2 = text2.substring(indexPoint + 1);
+                                                indexMark = text2.indexOf("<mark>");
+                                                indexPoint = text2.indexOf(".");
+                                            }
+                                            if (indexPoint > indexMark) {
+                                                text2 = text2.substring(0, indexPoint);
+                                            }
+                                            PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES (" + item + ", " + id + ", " + 2 + ", " + score + ", \'Elastic\', \' " + text1 + " \', \' " + text2 + " \')");
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                //JSONObject.internalResponse
-                //System.out.println(res.internalResponse);
-            }*/
+            }
         }
-
+        PostgreRequester.update("update iteration2.remise set analysefaite = 1 where id ="+ depot);
+        System.out.println("done");
     }
 
     public static void encoder(int depot) {
@@ -341,7 +398,7 @@ public class InsertIntoElasticSearch {
                             "\"data\":\"" + PdfTo64.encoder(properties.getProperty("document.path") + row[1] + row[2]) + "\"" +
                             "}",ContentType.APPLICATION_JSON);
                     idList.add(row[0]);
-                    //requester.executePost("http://s6ie1702.gel.usherbrooke.ca:9300" + "/"+travail_id+"/"+depot+"/"+row[0], "", body);
+                    
                     HashMap<String,String> param = new HashMap<String,String>();
                     param.put("pipeline", "attachment");
 
