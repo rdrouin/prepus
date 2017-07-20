@@ -231,15 +231,11 @@ public class InsertIntoElasticSearch {
                 for (int j = i + 1; j < size; j++)
                 {
                     id2 = hits.getJSONObject(j).getString("_id");
-                    //System.out.println("Documents " + id1 + " " + id2);
                     author2 =  hits.getJSONObject(j).getJSONObject("_source").getJSONObject("attachment").getString("author");
 
                     if (author1.equals(author2))
                     {
-                        //System.out.println("Same author for documents " + id1 + " " + id2);
-
                         PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
-
                     }
                 }
             }
@@ -266,7 +262,6 @@ public class InsertIntoElasticSearch {
 
             String[] sentences = response.split("\\. ");
             List<String> search = new ArrayList<String>();
-            //System.out.println(words.length);
             int numberOfSentences = (int) (sentences.length * .05);
 
             int rand = 0;
@@ -403,7 +398,7 @@ public class InsertIntoElasticSearch {
                             "\"data\":\"" + PdfTo64.encoder(properties.getProperty("document.path") + row[1] + row[2]) + "\"" +
                             "}",ContentType.APPLICATION_JSON);
                     idList.add(row[0]);
-                    //requester.executePost("http://s6ie1702.gel.usherbrooke.ca:9300" + "/"+travail_id+"/"+depot+"/"+row[0], "", body);
+                    
                     HashMap<String,String> param = new HashMap<String,String>();
                     param.put("pipeline", "attachment");
 
