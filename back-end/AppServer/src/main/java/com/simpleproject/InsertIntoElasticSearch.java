@@ -238,7 +238,6 @@ public class InsertIntoElasticSearch {
                     {
 
                         PostgreRequester.update("INSERT INTO iteration2.Ressemble (doc_1, doc_2, met_id, pourcentage, commantaire, text1, text2) VALUES ("+id1+", "+id2+", "+1 +", "+15+", \'Same author\', \' "+author1+" \', \' "+author2+" \')");
-
                     }
                 }
             }
@@ -266,9 +265,8 @@ public class InsertIntoElasticSearch {
             String[] sentences = response.split("\\. ");
             List<String> search = new ArrayList<String>();
 
-            //System.out.println(words.length);
             int numberOfSentences = (int) (sentences.length * ((float)similarityPercentage/100));
-
+            
 
             int rand = 0;
 
