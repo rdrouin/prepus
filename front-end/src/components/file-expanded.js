@@ -1,6 +1,9 @@
 import React from 'react'
 import { Component } from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+
+import { ApplicationActions } from '../redux/modules/application'
 
 class FileExpanded extends Component {
 
@@ -10,7 +13,15 @@ class FileExpanded extends Component {
     let similaritiesRight = this.props.file.id === this.props.activeFileRight
       ? this.props.file.similarities.filter(file => file.id === this.props.activeFileLeft) : ''
     return (
-      <div>
+      <div className="col-lg-6">
+      {this.props.side === 'left'
+        ? <a href="#" onClick={this.props.removeActiveFiles}>
+          <span className="glyphicon glyphicon-remove-circle" style={{'float':'right'}} aria-hidden="true"></span>
+        </a>
+        : <a href="#" onClick={this.props.removeActiveFileRight}>
+          <span className="glyphicon glyphicon-remove-circle" style={{'float':'right'}} aria-hidden="true"></span>
+        </a>
+    }
         <p>#{this.props.file.id}</p>
         <p>{this.props.file.cip}</p>
         <p>{this.props.file.name}</p>
@@ -30,4 +41,11 @@ function mapStateToProps (state) {
     activeFileRight: state.applicationReducer.activeFileRight
   }
 }
-export default connect(mapStateToProps)(FileExpanded)
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({
+    removeActiveFiles: ApplicationActions.removeActiveFiles,
+    removeActiveFileRight: ApplicationActions.removeActiveFileRight
+  }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FileExpanded)

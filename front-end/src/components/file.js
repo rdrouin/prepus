@@ -14,9 +14,11 @@ export default class File extends Component {
 
   render () {
     return (
-      <div>
-        <li onClick={this.setActiveFile}>{this.props.file.name} - {this.props.file.cip} - {this.props.file.size}</li>
-      </div>
+      <tr>
+        <td onClick={this.setActiveFile}>{this.props.file.name}</td>
+        <td>{this.props.file.cip}</td>
+        <td> {this.props.file.size}</td>
+      </tr>
     )
   }
 }

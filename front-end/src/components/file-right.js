@@ -4,26 +4,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import { ApplicationActions } from '../redux/modules/application'
-import FileExpanded from './file-expanded'
 import File from './file'
 
 class FilesRight extends Component {
+
   render () {
-    var styles = {
-      alignment: {
-        textAlign: 'left'
-      },
-      borders: {
-        border: 1,
-        borderStyle: 'solid',
-        borderColor: 'gray',
-        borderRadius: 5,
-        marginTop: 20
-      }
-    }
-
     let leftFileSimilarities = []
-
+    let rightList = ''
+    let noPlagiarism = false
     if (this.props.activeFileLeft !== -1 && this.props.activeFileRight === -1) {
       leftFileSimilarities = this.props.files.filter(file => file.id === this.props.activeFileLeft)[0].similarities
 
@@ -31,39 +19,37 @@ class FilesRight extends Component {
       let rightFilesIds = leftFileSimilarities.map(file => file.id)
       rightFilesIds = rightFilesIds.filter((file, pos) => (rightFilesIds.indexOf(file) === pos))
       if (leftFileSimilarities.length === 0) {
-        return (
-          <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
-            Aucun plagiat détecté
-          </div>
-        )
+        noPlagiarism = true
       } else {
-        return (
-          <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
-            <ul className="list-unstyled" style={styles.alignment}>
-              {
-                this.props.files
-                .filter(file => rightFilesIds.some(id => id === file.id))
-                .map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)
-              }
-            </ul>
-          </div>
-        )
+        rightList = this.props.files
+          .filter(file => rightFilesIds.some(id => id === file.id))
+          .map(file => <File file={file} key={file.id} setActiveFile={this.props.setActiveFileRight} />)
       }
-    } else if (this.props.activeFileRight !== -1) {
-      return (
-        <div className="col-lg-5 col-lg-offset-1" style={styles.borders}>
-          <button onClick={this.props.removeActiveFileRight} style={{ float: 'right' }}>X</button>
-          <ul className="list-unstyled" style={styles.alignment}>
-            {
-              this.props.files
-              .filter(file => file.id === this.props.activeFileRight)
-              .map((file) => <FileExpanded file={file} key={file.id} />)
-            }
-          </ul>
-        </div>
-      )
     }
-    return (<div></div>)
+    return (
+      <div className="row">
+      {
+      noPlagiarism || this.props.activeFileRight !== -1
+      ? <div className="col-lg-6">
+          Aucun Plagiat détecté
+      </div>
+      : this.props.activeFileLeft !== -1
+      ? <div className="col-lg-6">
+        <table className="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Fichiers</th>
+              <th>Cips</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>{rightList}</tbody>
+        </table>
+      </div>
+      : ''
+      }
+      </div>
+    )
   }
 }
 function mapStateToProps (state) {
