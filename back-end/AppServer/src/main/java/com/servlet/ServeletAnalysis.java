@@ -18,7 +18,10 @@ public class ServeletAnalysis extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         String idDepot = req.getParameter("depot");
-        InsertIntoElasticSearch.encoder(Integer.parseInt(idDepot));
+        int metadata = Integer.parseInt(req.getParameter("metadata"));
+        int similaritypercentage = Integer.parseInt(req.getParameter("similarityPercentage"));
+
+        InsertIntoElasticSearch.encoder(Integer.parseInt(idDepot),metadata,similaritypercentage);
         //FileAnalysis.launchAnalysis(Integer.parseInt(id));
         res.setContentType("text/plain");
         res.setCharacterEncoding( "UTF-8" );
